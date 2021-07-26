@@ -15,10 +15,9 @@ int main() {
     }));
 #endif
 
-    engine.addInitFunction([&player](class engine* e) {
+    engine.addInitFunction([](class engine* e) {
         engine::setBackgroundColor(0.9098f, 0.9137f, 0.9098f, 1.0f);
         e->captureMouse(false);
-        player.init(e);
     });
     engine.init();
     engine.run();
