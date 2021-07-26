@@ -8,20 +8,22 @@ elseif(CMAKE_BUILD_TYPE MATCHES Release)
     add_definitions(-DRELEASE)
 endif()
 
+add_subdirectory(external/ChiraEngine/src/)
+
 list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp)
 if(WIN32)
-    #list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/editor/win32/project.rc)
+    list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/editor/win32/project.rc)
 endif()
 
 add_executable(${PROJECT_NAME} ${EDITOR_SOURCES})
-#target_link_libraries(${PROJECT_NAME} ChiraEngine)
+target_link_libraries(${PROJECT_NAME} ChiraEngine)
 
 # Resources provided by the engine
-#add_custom_target(copyEngineResources ALL
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        ${CMAKE_CURRENT_SOURCE_DIR}/external/ChiraEngine/src/resources/engine/
-#        ${CMAKE_BINARY_DIR}/resources/engine/)
-#add_dependencies(${PROJECT_NAME} copyEngineResources)
+add_custom_target(copyEngineResources ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/ChiraEngine/src/resources/engine/
+        ${CMAKE_BINARY_DIR}/resources/engine/)
+add_dependencies(${PROJECT_NAME} copyEngineResources)
 
 # Resources provided by the editor
 add_custom_target(copyEditorResources ALL
