@@ -30,7 +30,43 @@ int main() {
     engine.init();
 
     engine.addRenderFunction([](class engine* e) {
-        engine::getMesh("teapot")->render();
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("New")) {
+                    // load default map
+                }
+                if (ImGui::MenuItem("Open...")) {
+                    // open map open dialog
+                }
+                if (ImGui::MenuItem("Save")) {
+                    // if it's not saved before open save dialog, else save
+                }
+                if (ImGui::MenuItem("Save as...")) {
+                    // open map save dialog
+                }
+                if (ImGui::MenuItem("Settings...")) {
+                    // open settings window
+                }
+                if (ImGui::MenuItem("Exit")) {
+                    // Maybe save the map before exiting, or ask to save
+                    e->stop();
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Edit")) {
+                if (ImGui::MenuItem("Properties...")) {
+                    // open the map properties window
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Help")) {
+                if (ImGui::MenuItem("Controls")) {
+                    // show controls window
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
     });
     engine.run();
     return 0;
