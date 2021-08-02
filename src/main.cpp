@@ -1,10 +1,9 @@
+#include <string>
 #include "../external/ChiraEngine/src/core/engine.h"
 #include "../external/ChiraEngine/src/render/freecam.h"
 #include "../external/ChiraEngine/src/loader/objMeshLoader.h"
 #include "../external/ChiraEngine/src/render/unlitMaterial.h"
 #include "../external/ChiraEngine/src/render/texture2d.h"
-
-#include "../external/VTFLib/src/VMTFile.h"
 
 int main() {
     engine engine;

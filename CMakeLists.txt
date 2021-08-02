@@ -15,13 +15,14 @@ add_subdirectory(external/ChiraEngine/src/)
 set(USE_LIBTXC_DXTN OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/VTFLib/)
 
+include(src/loader/CMakeLists.txt)
 list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp)
 if(WIN32)
     list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/editor/win32/project.rc)
 endif()
 
 add_executable(${PROJECT_NAME} ${EDITOR_SOURCES})
-target_link_libraries(${PROJECT_NAME} ChiraEngine ${VTFLIB_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ChiraEngine ${VTFLIB_LIBRARIES} VTFLib13)
 target_include_directories(${PROJECT_NAME} PUBLIC ${VTFLIB_INCLUDE_DIRS})
 
 # Resources provided by the engine
