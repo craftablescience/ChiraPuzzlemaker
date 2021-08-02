@@ -1,6 +1,7 @@
 #include "../external/ChiraEngine/src/core/engine.h"
 #include "../external/ChiraEngine/src/render/freecam.h"
 #include "../external/ChiraEngine/src/loader/objMeshLoader.h"
+#include "../external/ChiraEngine/src/render/unlitMaterial.h"
 
 int main() {
     engine engine;
@@ -15,9 +16,9 @@ int main() {
     }));
 #endif
 
-    engine::addShader("unlit", new shader("unlit.vsh", "unlit.fsh"));
-    engine::addMesh("teapot", new mesh(&meshLoader, "teapot.obj"));
-    engine::getMesh("teapot")->setShader("unlit");
+    engine::addShader("unlit", new shader{"unlit.vsh", "unlit.fsh"});
+    engine::addMaterial("unlit", new unlitMaterial{"unlit"});
+    engine::addMesh("teapot", new mesh{&meshLoader, "teapot.obj", "unlit"});
 
     engine.addInitFunction([](class engine* e) {
         // todo: make own camera class
