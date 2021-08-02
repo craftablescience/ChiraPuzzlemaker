@@ -8,7 +8,12 @@ elseif(CMAKE_BUILD_TYPE MATCHES Release)
     add_definitions(-DRELEASE)
 endif()
 
+# Chira Engine
 add_subdirectory(external/ChiraEngine/src/)
+
+# VTFLib
+set(USE_LIBTXC_DXTN OFF CACHE BOOL "" FORCE)
+add_subdirectory(external/VTFLib/)
 
 list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp)
 if(WIN32)
@@ -16,7 +21,8 @@ if(WIN32)
 endif()
 
 add_executable(${PROJECT_NAME} ${EDITOR_SOURCES})
-target_link_libraries(${PROJECT_NAME} ChiraEngine)
+target_link_libraries(${PROJECT_NAME} ChiraEngine ${VTFLIB_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${VTFLIB_INCLUDE_DIRS})
 
 # Resources provided by the engine
 add_custom_target(copyEngineResources ALL

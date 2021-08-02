@@ -1,3 +1,6 @@
 [submodule "external/ChiraEngine"]
 	path = external/ChiraEngine
 	url = https://github.com/craftablescience/ChiraEngine/
+[submodule "external/VTFLib"]
+	path = external/VTFLib
+	url = https://github.com/panzi/VTFLib

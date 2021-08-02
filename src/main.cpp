@@ -2,6 +2,9 @@
 #include "../external/ChiraEngine/src/render/freecam.h"
 #include "../external/ChiraEngine/src/loader/objMeshLoader.h"
 #include "../external/ChiraEngine/src/render/unlitMaterial.h"
+#include "../external/ChiraEngine/src/render/texture2d.h"
+
+#include "../external/VTFLib/src/VMTFile.h"
 
 int main() {
     engine engine;
@@ -16,6 +19,7 @@ int main() {
     }));
 #endif
 
+    engine::addTexture("teapot", new texture2d{"ui/icon.png", GL_RGBA});
     engine::addShader("unlit", new shader{"unlit.vsh", "unlit.fsh"});
     engine::addMaterial("unlit", new unlitMaterial{"unlit"});
     engine::addMesh("teapot", new mesh{&meshLoader, "teapot.obj", "unlit"});
