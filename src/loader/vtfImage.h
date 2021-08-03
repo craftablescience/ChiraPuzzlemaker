@@ -2,7 +2,8 @@
 
 #include "../../external/ChiraEngine/src/loader/image.h"
 
-class vtfImage : public image {
+class vtfImage : public abstractImage {
 public:
-    vtfImage(const std::string& filepath, int* width, int* height, int* fileChannels, int desiredChannels, bool vflip = true);
+    vtfImage(const std::string& filepath, unsigned int* width, unsigned int* height, int* glFormat, bool vFlip = false, int currentFrame = 0, int face = 0);
+    ~vtfImage();
 };

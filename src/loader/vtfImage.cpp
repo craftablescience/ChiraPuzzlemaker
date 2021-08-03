@@ -2,29 +2,25 @@
 #include "../../external/VTFLib/src/VTFLib.h"
 #include "../../external/ChiraEngine/src/core/engine.h"
 
-vtfImage::vtfImage(const std::string& filepath, int* width, int* height, int* fileChannels, int desiredChannels, bool vflip):
-    image(filepath, width, height, fileChannels, desiredChannels, vflip) {
-
+vtfImage::vtfImage(const std::string& filepath, unsigned int* width, unsigned int* height, int* glFormat, bool vFlip, int currentFrame, int face) : abstractImage() {
     VTFLib::CVTFFile vtf;
-    vlUInt w = vtf.GetWidth();
-    vlUInt h = vtf.GetHeight();
-    VTFImageFormat srcformat = vtf.GetFormat();
-    VTFImageFormat dstformat;
-
-    int glFormat;
-    if (VTFLib::CVTFFile::GetImageFormatInfo(srcformat).uiAlphaBitsPerPixel > 0) {
-        dstformat = IMAGE_FORMAT_RGBA8888;
-        glFormat = GL_RGBA8;
-    } else {
-        dstformat = IMAGE_FORMAT_RGB888;
-        glFormat = GL_RGB8;
+    if (!vtf.Load(filepath.c_str())) {
+        engine::logError("VTFImage", "Could not load VTF at " + filepath);
     }
-
-    int currentFrame = 0;
-    const vlByte* frame = vtf.GetData(currentFrame, 0, 0, 0);
-
-    if (!frame) {
+    *width = vtf.GetWidth();
+    *height = vtf.GetHeight();
+    if (VTFLib::CVTFFile::GetImageFormatInfo(vtf.GetFormat()).uiAlphaBitsPerPixel > 0) {
+        *glFormat = GL_RGBA8;
+    } else {
+        *glFormat = GL_RGB8;
+    }
+    this->data = reinterpret_cast<unsigned char*>(vtf.GetData(currentFrame, 0, face, 0));
+    if (!this->data) {
         engine::logWarning("VTFImage", "VTF at " + filepath + " has no data");
         return;
     }
+}
+
+vtfImage::~vtfImage() {
+    delete this->data;
 }

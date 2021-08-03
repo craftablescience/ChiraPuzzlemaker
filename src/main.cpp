@@ -4,6 +4,7 @@
 #include "../external/ChiraEngine/src/loader/objMeshLoader.h"
 #include "../external/ChiraEngine/src/render/unlitMaterial.h"
 #include "../external/ChiraEngine/src/render/texture2d.h"
+#include "loader/vtfImage.h"
 
 int main() {
     engine engine;
