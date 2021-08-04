@@ -8,17 +8,6 @@
 
 // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
 void SetupImGuiStyle() {
-    /*
-    ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->Clear();
-    ImFont* font = io.Fonts->AddFontFromFileTTF(R"(C:\Windows\Fonts\segoeui.ttf)", 18.0f);
-    if (font != nullptr) {
-        io.FontDefault = font;
-    } else {
-        io.Fonts->AddFontDefault();
-    }
-    io.Fonts->Build();
-     */
     ImGuiStyle* style = &ImGui::GetStyle();
     float hspacing = 8.0;
     float vspacing = 6.0;
@@ -113,6 +102,16 @@ int main() {
         e->getWorld()->addMesh("teapot");
         engine::setBackgroundColor(0.9098f, 0.9137f, 0.9098f, 1.0f);
         e->captureMouse(false);
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.Fonts->Clear();
+        ImFont* font = io.Fonts->AddFontFromFileTTF(virtualFileSystem::getGenericPath("fonts/selawik/selawk.ttf").c_str(), 18.0f);
+        if (font != nullptr) {
+            io.FontDefault = font;
+        } else {
+            io.Fonts->AddFontDefault();
+        }
+        io.Fonts->Build();
     });
     engine.init();
 
