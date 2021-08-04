@@ -3,4 +3,11 @@
 
 Yet another Portal 2 puzzlemaker, running on a custom engine.
 
-If you would like to contribute, please use CLion, it's the easiest way to build, run, and develop the project.
+## Building
+- **CLion (recommended)**: The project will build without any prior configuration.
+
+- Visual Studio 2019: You will need to install the following components:
+
+![image](https://user-images.githubusercontent.com/26600014/128105181-39065b10-a4f8-49f3-8818-22dcf4bac9e5.png)
+
+Additionally, compiling with MSVC will produce an error for x64 targets, due to a bug with AngelScript. I strongly recommend compiling with MinGW if you can help it, or targeting x86 if you can't.
