@@ -97,11 +97,11 @@ int main() {
     engine::addMesh("teapot", new mesh{&meshLoader, "teapot.obj", "unlit"});
 
     engine.addInitFunction([](class engine* e) {
+        e->captureMouse(false);
         // todo: make own camera class
         e->setWorld(new world{e, new freecam{e}});
         e->getWorld()->addMesh("teapot");
         engine::setBackgroundColor(0.9098f, 0.9137f, 0.9098f, 1.0f);
-        e->captureMouse(false);
 
         ImGuiIO& io = ImGui::GetIO();
         io.Fonts->Clear();
