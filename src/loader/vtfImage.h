@@ -11,6 +11,6 @@ public:
     unsigned int getWidth();
     unsigned int getHeight();
     int getGLFormat();
-private:
+
     VTFLib::CVTFFile vtf{};
 };
