@@ -1,13 +1,12 @@
 #include <string>
-#include "../external/ChiraEngine/src/core/engine.h"
-#include "../external/ChiraEngine/src/render/freecam.h"
-#include "../external/ChiraEngine/src/loader/objMeshLoader.h"
-#include "../external/ChiraEngine/src/render/unlitMaterial.h"
-#include "../external/ChiraEngine/src/render/texture2d.h"
-#include "loader/vtfImage.h"
+#include "../../external/ChiraEngine/src/core/engine.h"
+#include "../../external/ChiraEngine/src/render/freecam.h"
+#include "../../external/ChiraEngine/src/loader/objMeshLoader.h"
+#include "../../external/ChiraEngine/src/render/unlitMaterial.h"
+#include "../../external/ChiraEngine/src/render/texture2d.h"
 
 // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
-void SetupImGuiStyle() {
+void setupImGuiStyle() {
     ImGuiStyle* style = &ImGui::GetStyle();
     float hspacing = 8.0;
     float vspacing = 6.0;
@@ -78,6 +77,46 @@ void SetupImGuiStyle() {
     style->Colors[ImGuiCol_ScrollbarGrabActive] = darker;
 }
 
+void renderMenuBar(engine* e) {
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("New")) {
+                // load default map
+            }
+            if (ImGui::MenuItem("Open...")) {
+                // open map open dialog
+            }
+            if (ImGui::MenuItem("Save")) {
+                // if it's not saved before open save dialog, else save
+            }
+            if (ImGui::MenuItem("Save as...")) {
+                // open map save dialog
+            }
+            if (ImGui::MenuItem("Settings...")) {
+                // open settings window
+            }
+            if (ImGui::MenuItem("Exit")) {
+                // Maybe save the map before exiting, or ask to save
+                e->stop();
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit")) {
+            if (ImGui::MenuItem("Properties...")) {
+                // open the map properties window
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Help")) {
+            if (ImGui::MenuItem("Controls")) {
+                // show controls window
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+}
+
 int main() {
     engine engine;
     virtualFileSystem::addResourceDirectory("resources/editor/");
@@ -116,44 +155,8 @@ int main() {
     engine.init();
 
     engine.addRenderFunction([](class engine* e) {
-        SetupImGuiStyle();
-        if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("New")) {
-                    // load default map
-                }
-                if (ImGui::MenuItem("Open...")) {
-                    // open map open dialog
-                }
-                if (ImGui::MenuItem("Save")) {
-                    // if it's not saved before open save dialog, else save
-                }
-                if (ImGui::MenuItem("Save as...")) {
-                    // open map save dialog
-                }
-                if (ImGui::MenuItem("Settings...")) {
-                    // open settings window
-                }
-                if (ImGui::MenuItem("Exit")) {
-                    // Maybe save the map before exiting, or ask to save
-                    e->stop();
-                }
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Edit")) {
-                if (ImGui::MenuItem("Properties...")) {
-                    // open the map properties window
-                }
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Help")) {
-                if (ImGui::MenuItem("Controls")) {
-                    // show controls window
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
+        setupImGuiStyle();
+        renderMenuBar(e);
     });
     engine.run();
     return 0;
