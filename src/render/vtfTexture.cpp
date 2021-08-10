@@ -1,7 +1,6 @@
 #include "vtfTexture.h"
 
 #include "../../external/ChiraEngine/src/core/engine.h"
-#include "../loader/vtfImage.h"
 
 vtfTexture::vtfTexture(const std::string& file) : texture2d(getTexture(file), 7, 7, 7, 7) {}
 
