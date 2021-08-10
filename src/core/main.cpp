@@ -128,6 +128,9 @@ int main() {
     engine.addKeybind(keybind(GLFW_KEY_ESCAPE, GLFW_PRESS, [](class engine* e) {
         e->stop();
     }));
+    engine.addKeybind(keybind(GLFW_KEY_GRAVE_ACCENT, GLFW_PRESS, [](class engine* e) {
+        e->showConsole(!e->getConsole()->getEnabled());
+    }));
 #endif
 
     engine::addTexture("teapot", new texture2d{"ui/icon.png", GL_RGBA});
