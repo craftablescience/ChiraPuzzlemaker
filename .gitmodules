@@ -4,3 +4,6 @@
 [submodule "external/VTFLib"]
 	path = external/VTFLib
 	url = https://github.com/panzi/VTFLib
+[submodule "external/speedykv"]
+	path = external/speedykv
+	url = https://github.com/ozxybox/SpeedyKeyV
