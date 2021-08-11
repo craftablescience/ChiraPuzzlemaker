@@ -4,6 +4,7 @@
 #include "../../external/ChiraEngine/src/loader/objMeshLoader.h"
 #include "../../external/ChiraEngine/src/render/unlitMaterial.h"
 #include "../../external/ChiraEngine/src/render/texture2d.h"
+#include "../render/vtfTexture.h"
 
 // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
 void setupImGuiStyle() {
@@ -133,7 +134,7 @@ int main() {
     }));
 #endif
 
-    engine::addTexture("teapot", new texture2d{"ui/icon.png", GL_RGBA});
+    engine::addTexture("teapot", new vtfTexture{"vtf_test.vtf"});
     engine::addShader("unlit", new shader{"unlit.vsh", "unlit.fsh"});
     engine::addMaterial("unlit", new unlitMaterial{"unlit"});
     engine::addMesh("teapot", new mesh{&meshLoader, "teapot.obj", "unlit"});
