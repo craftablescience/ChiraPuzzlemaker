@@ -5,6 +5,7 @@
 #include "../../external/ChiraEngine/src/render/unlitMaterial.h"
 #include "../../external/ChiraEngine/src/render/texture2d.h"
 #include "../render/vtfTexture.h"
+#include "../../external/ChiraEngine/src/implementation/discordRichPresence.h"
 
 // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
 void setupImGuiStyle() {
@@ -145,6 +146,15 @@ int main() {
     engine::addMesh("teapot", new mesh{&meshLoader, "teapot.obj", "unlit"});
 
     engine.addInitFunction([](class engine* e) {
+        discordRichPresence::init("875568220315205653");
+        discordRichPresence::setLargeImage("main_logo");
+        discordRichPresence::setDetails("https://discord.gg/ASgHFkX");
+#if DEBUG
+        discordRichPresence::setState("Debug build");
+#else
+        discordRichPresence::setState("Release build");
+#endif
+
         e->captureMouse(false);
         // todo: make own camera class
         e->setWorld(new world{e, new freecam{e}});
