@@ -1,6 +1,6 @@
-#include "mdlLoader.h"
+#include "mdlMeshLoader.h"
 
-#include "abstractMeshLoader.h"
+#include "../../external/ChiraEngine/src/loader/abstractMeshLoader.h"
 #include "../../external/ChiraEngine/src/core/engine.h"
 
 struct MDL {
