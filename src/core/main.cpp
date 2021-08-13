@@ -6,6 +6,7 @@
 #include "../../external/ChiraEngine/src/render/texture2d.h"
 #include "../render/vtfTexture.h"
 #include "../../external/ChiraEngine/src/implementation/discordRichPresence.h"
+#include "../loader/mdlMeshLoader.h"
 
 // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
 void setupImGuiStyle() {
@@ -123,6 +124,8 @@ int main() {
     engine engine;
     virtualFileSystem::addResourceDirectory("resources/editor/");
     objMeshLoader meshLoader;
+
+    mdlLoader catboy("info_catboy_start");
 
     engine.getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
 
