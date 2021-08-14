@@ -4,10 +4,12 @@
 #include <string>
 
 typedef unsigned char byte;
+typedef glm::vec3 Vector;
+
 
 struct studiohdr_t {
     // Try to limit putting stuff in global scope :P
-    typedef glm::vec3 Vector;
+   
 
 	int		id;		// Model format ID, such as "IDST" (0x49 0x44 0x53 0x54)
 	int		version;	// Format version number, such as 48 (0x30,0x00,0x00,0x00)
@@ -197,3 +199,5 @@ class mdlLoader {
 public:
 	explicit mdlLoader(const std::string& filepath);
 };
+
+char* bufferator(std::string filepath);
