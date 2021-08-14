@@ -125,7 +125,7 @@ int main() {
     virtualFileSystem::addResourceDirectory("resources/editor/");
     objMeshLoader meshLoader;
 
-    mdlLoader catboy("info_catboy_start");
+    mdlLoader catboy("info_catboy_start.mdl");
 
     engine.getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
 
