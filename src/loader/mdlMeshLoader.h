@@ -6,6 +6,31 @@
 typedef unsigned char byte;
 typedef glm::vec3 Vector;
 
+// this structure is in <mod folder>/src/public/optimize.h
+struct VTX_FileHeader_t
+{
+	// file version as defined by OPTIMIZED_MODEL_FILE_VERSION (currently 7)
+	int version;
+
+	// hardware params that affect how the model is to be optimized.
+	int vertCacheSize;
+	unsigned short maxBonesPerStrip;
+	unsigned short maxBonesPerTri;
+	int maxBonesPerVert;
+
+	// must match checkSum in the .mdl
+	int checkSum;
+
+	int numLODs; // Also specified in ModelHeader_t's and should match
+
+	// Offset to materialReplacementList Array. one of these for each LOD, 8 in total
+	int materialReplacementListOffset;
+
+	//Defines the size and location of the body part array
+	int numBodyParts;
+	int bodyPartOffset;
+};
+
 
 struct studiohdr_t {
     // Try to limit putting stuff in global scope :P
@@ -193,6 +218,22 @@ struct studiohdr_t {
 	/**
 	 * As of this writing, the header is 408 bytes long in total
 	 */
+};
+
+struct mstudiotexture_t
+{
+	// Number of bytes past the beginning of this structure
+	// where the first character of the texture name can be found.
+	int		name_offset; 	// Offset for null-terminated string
+	int		flags;
+	int		used; 		// ??
+
+	int		unused; 	// ??
+
+	int	material;		// Placeholder for IMaterial
+	int	client_material;	// Placeholder for void*
+
+	int		unused2[10];
 };
 
 class mdlLoader {
