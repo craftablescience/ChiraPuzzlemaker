@@ -38,33 +38,22 @@ mdlLoader::mdlLoader(const std::string& filepath) {
         a lot of the logs are to read the current position, they're handy to see what is going on.
         */
 
-        engine::logInfo("Trico pre read", std::to_string(fs.tellg()));
         fs.read(reinterpret_cast<char*>(&model), sizeof(studiohdr_t)); //getting model, works fine.
-        engine::logInfo("Trico post read", std::to_string(fs.tellg()));
-        fs.seekg((int) fs.tellg() + model.texture_offset);
-        engine::logInfo("Trico post offset", std::to_string(fs.tellg()));
+        //fs.seekg(model.texture_offset + sizeof(studiohdr_t));
         std::vector<mstudiotexture_t> textures; //getting texture, questionable, i have no way to verify if this works.
         for (int i = 0;  i < model.texture_count; i++) {
-            engine::logInfo("Trico pre texture fetch", std::to_string(fs.tellg()));
-            std::size_t cto = sizeof(mstudiotexture_t) + fs.tellg();
-            fs.seekg((std::streamoff) cto);
-            engine::logInfo("Trico post texture fetch", std::to_string(fs.tellg()));
-            mstudiotexture_t texture{};
+            std::size_t cto = (int)model.texture_offset + (int)(i * (int)sizeof(mstudiotexture_t));
+            engine::logInfo("Trico number ", std::to_string(model.texture_offset + i * (int)sizeof(mstudiotexture_t)));
+            fs.seekg(cto,std::ios::beg);
+            mstudiotexture_t texture;
             fs.read(reinterpret_cast<char*>(&texture), sizeof(mstudiotexture_t));
-
-            engine::logInfo("Trico current texture offset", std::to_string(fs.tellg()));
-            engine::logInfo("Trico offset texture offset", std::to_string(texture.name_offset));
-            fs.seekg(texture.name_offset + fs.tellg());
-            engine::logInfo("Trico current texture offset result", std::to_string(fs.tellg()));
-            std::string name;
-
+            fs.seekg(cto + (texture.name_offset), std::ios::beg);
+            engine::logInfo("Trico texture offset name", std::to_string(texture.name_offset));
+            std::string name = "";
             char ch;
-            int iterations = 0;
-            while ((ch = (char) fs.get()) != '\0' && iterations < 100) {
-                name += ch;
-                iterations++;
-                engine::logInfo("Trico current texture offset result", std::to_string(iterations));
-            }
+            std::getline(fs, name, '\0');
+
+
             engine::logInfo("Trico texture name_offset: ", std::to_string(texture.name_offset));
             engine::logInfo("Trico texture name after offset name grab: ", name);
             textures.push_back(texture);
