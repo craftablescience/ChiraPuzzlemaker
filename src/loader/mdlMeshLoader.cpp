@@ -27,8 +27,8 @@ mdlLoader::mdlLoader(const std::string& filepath) {
 
     std::fstream fs;
 
-    studiohdr_t model;
-    VTX_FileHeader_t vertexData;
+    studiohdr_t model{};
+    VTX_FileHeader_t vertexData{};
 
     fs.open(rawMDL,std::ios::in | std::ios::binary);
 
@@ -41,15 +41,15 @@ mdlLoader::mdlLoader(const std::string& filepath) {
         engine::logInfo("Trico pre read", std::to_string(fs.tellg()));
         fs.read(reinterpret_cast<char*>(&model), sizeof(studiohdr_t)); //getting model, works fine.
         engine::logInfo("Trico post read", std::to_string(fs.tellg()));
-        fs.seekg((int)fs.tellg() + model.texture_offset);
+        fs.seekg((int) fs.tellg() + model.texture_offset);
         engine::logInfo("Trico post offset", std::to_string(fs.tellg()));
         std::vector<mstudiotexture_t> textures; //getting texture, questionable, i have no way to verify if this works.
         for (int i = 0;  i < model.texture_count; i++) {
             engine::logInfo("Trico pre texture fetch", std::to_string(fs.tellg()));
-            int cto = sizeof(mstudiotexture_t) + fs.tellg();
-            fs.seekg(cto);
+            std::size_t cto = sizeof(mstudiotexture_t) + fs.tellg();
+            fs.seekg((std::streamoff) cto);
             engine::logInfo("Trico post texture fetch", std::to_string(fs.tellg()));
-            mstudiotexture_t texture;
+            mstudiotexture_t texture{};
             fs.read(reinterpret_cast<char*>(&texture), sizeof(mstudiotexture_t));
 
             engine::logInfo("Trico current texture offset", std::to_string(fs.tellg()));
@@ -60,8 +60,7 @@ mdlLoader::mdlLoader(const std::string& filepath) {
 
             char ch;
             int iterations = 0;
-            while ((ch = fs.get()) != '\0' && iterations < 100) {
-                
+            while ((ch = (char) fs.get()) != '\0' && iterations < 100) {
                 name += ch;
                 iterations++;
                 engine::logInfo("Trico current texture offset result", std::to_string(iterations));
