@@ -236,9 +236,10 @@ struct mstudiotexture_t
 	int		unused2[10];
 };
 
-class mdlLoader {
-public:
+class mdlLoader{
+
 	explicit mdlLoader(const std::string& filepath);
+public:
+	void mdlLoader::loadMesh(const std::string& filepath, std::vector<vertex>* vertices, std::vector<unsigned int>* indices);
 };
 
-char* bufferator(std::string filepath);

@@ -6,12 +6,15 @@
 #include <fstream>
 #include "../../external/ChiraEngine/src/third_party/openalsoft/common/alfstream.h"
 
-
+//: public abstractMeshLoader
 struct MDL {
     studiohdr_t m_header;
-
-    MDL(studiohdr_t header) {
+    mstudiotexture_t m_textureData;
+    std::vector<mstudiotexture_t> m_textures;
+    MDL(studiohdr_t header, mstudiotexture_t textureData, std::vector<mstudiotexture_t> texture) {
         m_header = header;
+        m_textureData = textureData;
+        m_textures = texture;
     }
 };
 
@@ -93,6 +96,10 @@ mdlLoader::mdlLoader(const std::string& filepath) {
 
     */
 
+}
+
+void mdlLoader::loadMesh(const std::string& filepath, std::vector<vertex>* vertices, std::vector<unsigned int>* indices)
+{
 }
 
 
