@@ -1,11 +1,35 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.15)
 project(ChiraEditor)
 set(CMAKE_CXX_STANDARD 17)
 
+# Definitions
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-DDEBUG)
+    if(UNIX OR MINGW)
+        # On UNIX, build with debug friendly optimizations and debug symbols
+        # On windows, just disable optimizations entirely
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Og -g")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g")
+    elseif(MSVC)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Od")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od")
+    endif()
 elseif(CMAKE_BUILD_TYPE MATCHES Release)
     add_definitions(-DRELEASE)
+    # Build with max optimizations and don't omit stack ptr for debugging reasons
+    if(UNIX OR MINGW)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -fno-omit-frame-pointer")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fno-omit-frame-pointer")
+    elseif(MSVC)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O2")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")
+    endif()
+endif()
+
+# Build with -Wall on Linux
+if(UNIX OR MINGW)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 endif()
 
 # Chira Engine
@@ -26,7 +50,7 @@ if(WIN32)
 endif()
 
 add_executable(${PROJECT_NAME} ${EDITOR_SOURCES})
-target_link_libraries(${PROJECT_NAME} ChiraEngine ${VTFLIB_LIBRARIES} VTFLib13 keyvalues)
+target_link_libraries(${PROJECT_NAME} ChiraEngine ${OPENGL_LIBRARIES} ${VTFLIB_LIBRARIES} VTFLib13 keyvalues)
 target_include_directories(${PROJECT_NAME} PUBLIC ${VTFLIB_INCLUDE_DIRS})
 
 # Resources provided by the engine
@@ -42,5 +66,3 @@ add_custom_target(copyEditorResources ALL
         ${CMAKE_CURRENT_SOURCE_DIR}/resources/editor/
         ${CMAKE_BINARY_DIR}/resources/editor/)
 add_dependencies(${PROJECT_NAME} copyEditorResources)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
