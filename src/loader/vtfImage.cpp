@@ -5,7 +5,7 @@ vtfImage::vtfImage(const std::string& filepath, bool vFlip, int currentFrame, in
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
     if (!tmpFile.Load(virtualFileSystem::getTexturePath(filepath).c_str())) {
-        engine::logError("VTFImage", "Could not load VTF at " + filepath);
+        chiraLogger::log(ERR, "VTFImage", "Could not load VTF at " + filepath);
     }
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(

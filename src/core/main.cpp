@@ -124,12 +124,12 @@ int main() {
     virtualFileSystem::addResourceDirectory("resources/editor/");
     objMeshLoader meshLoader;
 
-    engine.getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
+    engine::getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
 
     // decreases the max number of lights, there's no need for as many as the engine default
-    engine.getSettingsLoader()->setValue("engine", "maxPointLights", 8, false, false);
-    engine.getSettingsLoader()->setValue("engine", "maxDirectionalLights", 1, false, false);
-    engine.getSettingsLoader()->setValue("engine", "maxSpotLights", 1, false, false);
+    engine::getSettingsLoader()->setValue("engine", "maxPointLights", 8, false, false);
+    engine::getSettingsLoader()->setValue("engine", "maxDirectionalLights", 1, false, false);
+    engine::getSettingsLoader()->setValue("engine", "maxSpotLights", 1, false, false);
 
 #if DEBUG
     engine.addKeybind(keybind(GLFW_KEY_ESCAPE, GLFW_PRESS, [](class engine* e) {
