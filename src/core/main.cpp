@@ -2,10 +2,11 @@
 #include "../../external/ChiraEngine/src/core/engine.h"
 #include "../../external/ChiraEngine/src/render/freecam.h"
 #include "../../external/ChiraEngine/src/loader/objMeshLoader.h"
-#include "../../external/ChiraEngine/src/render/unlitMaterial.h"
 #include "../../external/ChiraEngine/src/render/texture2d.h"
+#include "../../external/ChiraEngine/src/resource/filesystemResourceProvider.h"
 #include "../render/vtfTexture.h"
 #include "../../external/ChiraEngine/src/implementation/discordRichPresence.h"
+#include "../render/vtfMaterial.h"
 
 // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
 void setupImGuiStyle() {
@@ -121,9 +122,8 @@ void renderMenuBar(engine* e) {
 
 int main() {
     engine engine;
-    virtualFileSystem::addResourceDirectory("resources/editor/");
-    objMeshLoader meshLoader;
-
+    resourceManager::addResourceProvider("file", new filesystemResourceProvider{"file", "resources/editor"});
+    mesh::addMeshLoader("obj", new objMeshLoader{});
     engine::getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
 
     // decreases the max number of lights, there's no need for as many as the engine default
@@ -140,12 +140,10 @@ int main() {
     }));
 #endif
 
-    engine::addTexture("teapot", new vtfTexture{"vtf_test.vtf"});
-    engine::addShader("unlit", new shader{"unlit.vsh", "unlit.fsh"});
-    engine::addMaterial("unlit", new unlitMaterial{"unlit"});
-    engine::addMesh("teapot", new mesh{&meshLoader, "teapot.obj", "unlit"});
-
     engine.addInitFunction([](class engine* e) {
+        auto* cubeMaterial = resourceManager::getResource<vtfMaterial>("file", "materials/test_vtf_material.json");
+        auto* cubeMesh = resourceManager::getResource<mesh>("file", "meshes/teapot.json", cubeMaterial);
+
         discordRichPresence::init("875568220315205653");
         discordRichPresence::setLargeImage("main_logo");
         discordRichPresence::setDetails("https://discord.gg/ASgHFkX");
@@ -158,12 +156,13 @@ int main() {
         e->captureMouse(false);
         // todo: make own camera class
         e->setWorld(new world{e, new freecam{e}});
-        e->getWorld()->addMesh("teapot");
+        e->getWorld()->addMesh(cubeMesh);
         engine::setBackgroundColor(0.9098f, 0.9137f, 0.9098f, 1.0f);
 
         ImGuiIO& io = ImGui::GetIO();
         io.Fonts->Clear();
-        ImFont* font = io.Fonts->AddFontFromFileTTF(virtualFileSystem::getGenericPath("fonts/selawik/selawk.ttf").c_str(), 18.0f);
+        std::string filepath = ((filesystemResourceProvider*) resourceManager::getResourceProviderWithResource("file", "fonts/selawik/selawk.ttf"))->getPath() + "/fonts/selawik/selawk.ttf";
+        ImFont* font = io.Fonts->AddFontFromFileTTF(filepath.c_str(), 18.0f);
         if (font != nullptr) {
             io.FontDefault = font;
         } else {

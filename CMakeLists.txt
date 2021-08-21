@@ -56,7 +56,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${VTFLIB_INCLUDE_DIRS})
 # Resources provided by the engine
 add_custom_target(copyEngineResources ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/external/ChiraEngine/src/resources/engine/
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/ChiraEngine/resources/engine/
         ${CMAKE_BINARY_DIR}/resources/engine/)
 add_dependencies(${PROJECT_NAME} copyEngineResources)
 
