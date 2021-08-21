@@ -6,7 +6,7 @@
 
 class vtfTexture : public texture2d {
 public:
-    explicit vtfTexture(const std::string& provider_, const std::string& name_) : texture2d(provider_, name_, 0, 0, 0, 0) {}
+    explicit vtfTexture(const std::string& provider_, const std::string& name_, bool vFlip_ = true) : texture2d(provider_, name_, 0, vFlip_, 0, 0, 0) {}
     void compile(unsigned char* buffer, std::size_t bufferLen) override {
         this->file = std::make_unique<vtfImage>(buffer, bufferLen);
         this->width = (int) this->getWidth();
