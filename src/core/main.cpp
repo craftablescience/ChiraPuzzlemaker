@@ -125,9 +125,8 @@ int main() {
     engine engine;
     resourceManager::addResourceProvider("file", new filesystemResourceProvider{"file", "resources/editor"});
     mesh::addMeshLoader("obj", new objMeshLoader{});
+    mesh::addMeshLoader("mdl", new mdlMeshLoader{});
     engine::getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
-
-    mdlLoader catboy("info_catboy_start.mdl");
 
     // decreases the max number of lights, there's no need for as many as the engine default
     engine::getSettingsLoader()->setValue("engine", "maxPointLights", 8, false, false);
@@ -145,7 +144,7 @@ int main() {
 
     engine.addInitFunction([](class engine* e) {
         auto* cubeMaterial = resourceManager::getResource<vtfMaterial>("file", "materials/test_vtf_material.json");
-        auto* cubeMesh = resourceManager::getResource<mesh>("file", "meshes/teapot.json", cubeMaterial);
+        auto* catboyMesh = resourceManager::getResource<mesh>("file", "meshes/info_catboy_start.json", cubeMaterial);
 
         discordRichPresence::init("875568220315205653");
         discordRichPresence::setLargeImage("main_logo");
@@ -159,7 +158,7 @@ int main() {
         e->captureMouse(false);
         // todo: make own camera class
         e->setWorld(new world{e, new freecam{e}});
-        e->getWorld()->addMesh(cubeMesh);
+        e->getWorld()->addMesh(catboyMesh);
         engine::setBackgroundColor(0.9098f, 0.9137f, 0.9098f, 1.0f);
 
         ImGuiIO& io = ImGui::GetIO();

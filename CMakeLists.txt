@@ -44,6 +44,7 @@ add_subdirectory(external/speedykv/)
 
 include(src/loader/CMakeLists.txt)
 include(src/render/CMakeLists.txt)
+include(src/utility/CMakeLists.txt)
 list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/core/main.cpp)
 if(WIN32)
     list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/editor/win32/project.rc)
