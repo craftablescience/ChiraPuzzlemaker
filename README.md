@@ -4,7 +4,7 @@
 Yet another Portal 2 puzzlemaker, running on a custom engine.
 
 ## Building
-- **CLion (recommended)**: The project will build without any prior configuration.
+- **CLion (recommended)**: The project will build without any prior configuration. If developing on Windows, you will need to install the Windows SDK (see below).
 
 - Visual Studio 2019: You will need to install the following components:
 
