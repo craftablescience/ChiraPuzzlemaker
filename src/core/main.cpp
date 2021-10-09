@@ -5,11 +5,16 @@
 #include "../../external/ChiraEngine/src/render/texture2d.h"
 #include "../../external/ChiraEngine/src/resource/filesystemResourceProvider.h"
 #include "../render/vtfTexture.h"
-#include "../../external/ChiraEngine/src/implementation/discordRichPresence.h"
+#include "../../external/ChiraEngine/src/hook/discordRichPresence.h"
 #include "../render/vtfMaterial.h"
+#include "../../external/ChiraEngine/src/resource/resourceManager.h"
+#include "../../external/ChiraEngine/src/wec/componentManager.h"
+#include "../../external/ChiraEngine/src/wec/extensibleWorld.h"
+#include "../../external/ChiraEngine/src/wec/propEntity.h"
 
 // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
 void setupImGuiStyle() {
+    // todo: integrate this into an abstracted ui later, and use push/pop
     ImGuiStyle* style = &ImGui::GetStyle();
     float hspacing = 8.0;
     float vspacing = 6.0;
@@ -70,17 +75,14 @@ void setupImGuiStyle() {
     style->Colors[ImGuiCol_SliderGrab] = grab;
     style->Colors[ImGuiCol_SliderGrabActive] = darker;
 
-    //style->Colors[ImGuiCol_CloseButton] = transparent;
-    //style->Colors[ImGuiCol_CloseButtonHovered] = transparent;
-    //style->Colors[ImGuiCol_CloseButtonActive] = transparent;
-
     style->Colors[ImGuiCol_ScrollbarBg] = header;
     style->Colors[ImGuiCol_ScrollbarGrab] = grab;
     style->Colors[ImGuiCol_ScrollbarGrabHovered] = dark;
     style->Colors[ImGuiCol_ScrollbarGrabActive] = darker;
 }
 
-void renderMenuBar(engine* e) {
+void renderMenuBar() {
+    // todo(i18n)
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("New")) {
@@ -100,7 +102,7 @@ void renderMenuBar(engine* e) {
             }
             if (ImGui::MenuItem("Exit")) {
                 // Maybe save the map before exiting, or ask to save
-                e->stop();
+                engine::stop();
             }
             ImGui::EndMenu();
         }
@@ -121,9 +123,8 @@ void renderMenuBar(engine* e) {
 }
 
 int main() {
-    engine engine;
+    engine::preInit();
     resourceManager::addResourceProvider("file", new filesystemResourceProvider{"file", "resources/editor"});
-    mesh::addMeshLoader("obj", new objMeshLoader{});
     engine::getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
 
     // decreases the max number of lights, there's no need for as many as the engine default
@@ -132,50 +133,56 @@ int main() {
     engine::getSettingsLoader()->setValue("engine", "maxSpotLights", 1, false, false);
 
 #if DEBUG
-    engine.addKeybind(keybind(GLFW_KEY_ESCAPE, GLFW_PRESS, [](class engine* e) {
-        e->stop();
+    engine::addKeybind(keybind(GLFW_KEY_ESCAPE, GLFW_PRESS, []() {
+        engine::stop();
     }));
-    engine.addKeybind(keybind(GLFW_KEY_GRAVE_ACCENT, GLFW_PRESS, [](class engine* e) {
-        e->showConsole(!e->getConsole()->getEnabled());
+    engine::addKeybind(keybind(GLFW_KEY_GRAVE_ACCENT, GLFW_PRESS, []() {
+        engine::showConsole(!engine::getConsole()->getEnabled());
     }));
 #endif
 
-    engine.addInitFunction([](class engine* e) {
-        auto* cubeMaterial = resourceManager::getResource<vtfMaterial>("file", "materials/test_vtf_material.json");
-        auto* cubeMesh = resourceManager::getResource<mesh>("file", "meshes/teapot.json", cubeMaterial);
+    mesh* teapot;
+
+    engine::addInitFunction([&teapot]() {
+        teapot = resourceManager::getResource<mesh>(
+                "file://meshes/teapot.json",
+                resourceManager::getResource<vtfMaterial>("file://materials/test_vtf_material.json"));
 
         discordRichPresence::init("875568220315205653");
         discordRichPresence::setLargeImage("main_logo");
         discordRichPresence::setDetails("https://discord.gg/ASgHFkX");
 #if DEBUG
+        // todo(i18n)
         discordRichPresence::setState("Debug build");
 #else
+        // todo(i18n)
         discordRichPresence::setState("Release build");
 #endif
+        uuids::uuid worldId = componentManager::addWorld(new extensibleWorld{
+                [](double delta){},
+                [](double delta){},
+                [](){}
+        });
+        componentManager::getWorld<extensibleWorld>(worldId)->add(
+                (new propEntity())->init(new meshComponent(teapot, glm::vec3{}, glm::vec3{})));
 
-        e->captureMouse(false);
+        engine::captureMouse(false);
         // todo: make own camera class
-        e->setWorld(new world{e, new freecam{e}});
-        e->getWorld()->addMesh(cubeMesh);
+        engine::setMainCamera(new freecam{});
         engine::setBackgroundColor(0.9098f, 0.9137f, 0.9098f, 1.0f);
 
-        ImGuiIO& io = ImGui::GetIO();
-        io.Fonts->Clear();
-        std::string filepath = ((filesystemResourceProvider*) resourceManager::getResourceProviderWithResource("file", "fonts/selawik/selawk.ttf"))->getPath() + "/fonts/selawik/selawk.ttf";
-        ImFont* font = io.Fonts->AddFontFromFileTTF(filepath.c_str(), 18.0f);
-        if (font != nullptr) {
-            io.FontDefault = font;
-        } else {
-            io.Fonts->AddFontDefault();
-        }
-        io.Fonts->Build();
+        // Don't release the fontResource when done to keep it cached
+        auto* selawk = resourceManager::getResource<fontResource>("file://fonts/default.json");
+        ImGui::GetIO().FontDefault = selawk->getFont();
     });
-    engine.init();
+    engine::init();
 
-    engine.addRenderFunction([](class engine* e) {
+    engine::addRenderFunction([&teapot]() {
+        teapot->getMaterial()->getShader()->setUniform("p", engine::getMainCamera()->getProjectionMatrix());
+        teapot->getMaterial()->getShader()->setUniform("v", engine::getMainCamera()->getViewMatrix());
+        // todo: add dock space that respects top bar
         setupImGuiStyle();
-        renderMenuBar(e);
+        renderMenuBar();
     });
-    engine.run();
-    return 0;
+    engine::run();
 }

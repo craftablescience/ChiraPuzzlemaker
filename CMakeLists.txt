@@ -7,7 +7,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-DDEBUG)
     if(UNIX OR MINGW)
         # On UNIX, build with debug friendly optimizations and debug symbols
-        # On windows, just disable optimizations entirely
+        # On Windows, just disable optimizations entirely
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Og -g")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g")
     elseif(MSVC)
@@ -20,6 +20,7 @@ elseif(CMAKE_BUILD_TYPE MATCHES Release)
     if(UNIX OR MINGW)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -fno-omit-frame-pointer")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fno-omit-frame-pointer")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath='$ORIGIN'")
     elseif(MSVC)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O2")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")
@@ -46,7 +47,7 @@ include(src/loader/CMakeLists.txt)
 include(src/render/CMakeLists.txt)
 list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/core/main.cpp)
 if(WIN32)
-    list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/editor/win32/project.rc)
+    list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/win32/project.rc)
 endif()
 
 add_executable(${PROJECT_NAME} ${EDITOR_SOURCES})
@@ -63,6 +64,6 @@ add_dependencies(${PROJECT_NAME} copyEngineResources)
 # Resources provided by the editor
 add_custom_target(copyEditorResources ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/editor/
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/
         ${CMAKE_BINARY_DIR}/resources/editor/)
 add_dependencies(${PROJECT_NAME} copyEditorResources)

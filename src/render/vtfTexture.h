@@ -4,9 +4,11 @@
 #include "../../external/ChiraEngine/src/utility/logger.h"
 #include "../loader/vtfImage.h"
 
+using namespace chira;
+
 class vtfTexture : public texture2d {
 public:
-    explicit vtfTexture(const std::string& provider_, const std::string& name_, bool vFlip_ = true) : texture2d(provider_, name_, 0, vFlip_, 0, 0, 0) {}
+    explicit vtfTexture(const std::string& identifier_, bool vFlip_ = true, int wrapModeU = GL_REPEAT, int wrapModeV = GL_REPEAT, int filterMode = GL_LINEAR) : texture2d(identifier_, 0, vFlip_, wrapModeU, wrapModeV, filterMode) {}
     void compile(unsigned char* buffer, std::size_t bufferLen) override {
         this->file = std::make_unique<vtfImage>(buffer, bufferLen);
         this->width = (int) this->getWidth();
@@ -31,7 +33,8 @@ public:
                 glGenerateMipmap(GL_TEXTURE_2D);
             }
         } else {
-            chira::logger::log(ERR, "Texture2D", "Texture failed to compile. Missing image data");
+            // todo(i18n)
+            logger::log(ERR, "Texture2D", "Texture failed to compile. Missing image data");
         }
     }
     unsigned int getWidth() {

@@ -5,7 +5,8 @@ vtfImage::vtfImage(const unsigned char* buffer, std::size_t bufferLen, bool vFli
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
     if (!tmpFile.Load(buffer, bufferLen - 1)) {
-        chira::logger::log(ERR, "VTFImage", "Could not load VTF from buffer");
+        // todo(i18n)
+        logger::log(ERR, "VTFImage", "Could not load VTF from buffer");
     }
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(
@@ -26,6 +27,7 @@ vtfImage::vtfImage(const std::string& filepath, bool vFlip, int currentFrame, in
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
     if (!tmpFile.Load(filepath.c_str())) {
+        // todo(i18n)
         chira::logger::log(ERR, "VTFImage", "Could not load VTF at " + filepath);
     }
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());

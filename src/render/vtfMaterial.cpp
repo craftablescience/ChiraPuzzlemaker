@@ -3,7 +3,7 @@
 
 void vtfMaterial::compile(const nlohmann::json& properties) {
     material::compile(properties);
-    this->vtfTex = resourceManager::getResource<vtfTexture>(this->provider, properties["dependencies"]["texture"]);
+    this->vtfTex = resourceManager::getResource<vtfTexture>(properties["dependencies"]["texture"]);
     this->vtfTex->setTextureUnit(GL_TEXTURE0);
 }
 

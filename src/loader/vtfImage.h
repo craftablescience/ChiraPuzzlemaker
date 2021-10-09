@@ -3,6 +3,8 @@
 #include "../../external/ChiraEngine/src/loader/image.h"
 #include "../../external/VTFLib/src/VTFLib.h"
 
+using namespace chira;
+
 class vtfImage : public abstractImage {
 public:
     vtfImage(const unsigned char* buffer, std::size_t bufferLen, bool vFlip = false, int currentFrame = 0, int face = 0);
