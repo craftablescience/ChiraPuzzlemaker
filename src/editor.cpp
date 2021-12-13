@@ -138,9 +138,7 @@ int main() {
     }));
 #endif
 
-    sharedPointer<meshResource> teapot;
-
-    engine::addInitFunction([&teapot]() {
+    engine::addInitFunction([]() {
         discordRichPresence::init(TR("editor.discord.application_id"));
         discordRichPresence::setLargeImage("main_logo");
         discordRichPresence::setDetails("https://discord.gg/ASgHFkX");
@@ -155,7 +153,7 @@ int main() {
         // todo: make own camera class
         engine::getRoot()->setMainCamera(new freecam{cameraProjectionMode::PERSPECTIVE});
 
-        teapot = resource::getResource<meshResource>(
+        auto teapot = resource::getResource<meshResource>(
                 "file://meshes/teapot.json",
                 resource::getResource<vtfMaterial>("file://materials/vtf_test.json").castDynamic<material>());
         engine::getRoot()->addChild(new mesh3d{teapot});
@@ -165,11 +163,7 @@ int main() {
     });
     engine::init();
 
-    engine::addRenderFunction([&teapot]() {
-        teapot->getMaterial()->getShader()->use();
-        teapot->getMaterial()->getShader()->setUniform("p", engine::getRoot()->getMainCamera()->getProjection());
-        teapot->getMaterial()->getShader()->setUniform("v", engine::getRoot()->getMainCamera()->getView());
-
+    engine::addRenderFunction([]() {
         setupImGuiStyle();
         // todo: add dock space that respects top bar
         renderMenuBar();
