@@ -1,16 +1,11 @@
 #include <string>
-#include "../../external/ChiraEngine/src/core/engine.h"
-#include "../../external/ChiraEngine/src/render/freecam.h"
-#include "../../external/ChiraEngine/src/loader/objMeshLoader.h"
-#include "../../external/ChiraEngine/src/render/texture2d.h"
-#include "../../external/ChiraEngine/src/resource/filesystemResourceProvider.h"
-#include "../render/vtfTexture.h"
-#include "../../external/ChiraEngine/src/hook/discordRichPresence.h"
-#include "../render/vtfMaterial.h"
-#include "../../external/ChiraEngine/src/resource/resourceManager.h"
-#include "../../external/ChiraEngine/src/wec/componentManager.h"
-#include "../../external/ChiraEngine/src/wec/extensibleWorld.h"
-#include "../../external/ChiraEngine/src/wec/propEntity.h"
+#include <core/engine.h>
+#include <resource/provider/filesystemResourceProvider.h>
+#include <hook/discordRichPresence.h>
+#include <i18n/translationManager.h>
+#include <entity/3d/camera/freecam.h>
+#include <entity/3d/model/mesh3d.h>
+#include <render/vtfMaterial.h>
 
 // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
 void setupImGuiStyle() {
@@ -124,10 +119,12 @@ void renderMenuBar() {
 
 int main() {
     engine::preInit();
-    resourceManager::addResourceProvider("file", new filesystemResourceProvider{"file", "resources/editor"});
+    resource::addResourceProvider("file", new filesystemResourceProvider{"file", "resources/editor"});
+    translationManager::addTranslationFile("file://i18n/editor");
+    translationManager::addUniversalFile("file://i18n/editor");
     engine::getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
 
-    // decreases the max number of lights, there's no need for as many as the engine default
+    // Decreases the max number of lights, there's no need for as many as the engine default
     engine::getSettingsLoader()->setValue("engine", "maxPointLights", 8, false, false);
     engine::getSettingsLoader()->setValue("engine", "maxDirectionalLights", 1, false, false);
     engine::getSettingsLoader()->setValue("engine", "maxSpotLights", 1, false, false);
@@ -137,51 +134,44 @@ int main() {
         engine::stop();
     }));
     engine::addKeybind(keybind(GLFW_KEY_GRAVE_ACCENT, GLFW_PRESS, []() {
-        engine::showConsole(!engine::getConsole()->getEnabled());
+        engine::getConsole()->setVisible(!engine::getConsole()->isVisible());
     }));
 #endif
 
-    mesh* teapot;
+    sharedPointer<meshResource> teapot;
 
     engine::addInitFunction([&teapot]() {
-        teapot = resourceManager::getResource<mesh>(
-                "file://meshes/teapot.json",
-                resourceManager::getResource<vtfMaterial>("file://materials/test_vtf_material.json"));
-
-        discordRichPresence::init("875568220315205653");
+        discordRichPresence::init(TR("editor.discord.application_id"));
         discordRichPresence::setLargeImage("main_logo");
         discordRichPresence::setDetails("https://discord.gg/ASgHFkX");
 #if DEBUG
-        // todo(i18n)
-        discordRichPresence::setState("Debug build");
+        discordRichPresence::setState(TR("ui.discord.debug_build"));
 #else
-        // todo(i18n)
-        discordRichPresence::setState("Release build");
+        discordRichPresence::setState(TR("ui.discord.release_build"));
 #endif
-        uuids::uuid worldId = componentManager::addWorld(new extensibleWorld{
-                [](double delta){},
-                [](double delta){},
-                [](){}
-        });
-        componentManager::getWorld<extensibleWorld>(worldId)->add(
-                (new propEntity())->init(new meshComponent(teapot, glm::vec3{}, glm::vec3{})));
+        engine::setBackgroundColor(0.9098f, 0.9137f, 0.9098f, 1.0f);
 
         engine::captureMouse(false);
         // todo: make own camera class
-        engine::setMainCamera(new freecam{});
-        engine::setBackgroundColor(0.9098f, 0.9137f, 0.9098f, 1.0f);
+        engine::getRoot()->setMainCamera(new freecam{cameraProjectionMode::PERSPECTIVE});
 
-        // Don't release the fontResource when done to keep it cached
-        auto* selawk = resourceManager::getResource<fontResource>("file://fonts/default.json");
+        teapot = resource::getResource<meshResource>(
+                "file://meshes/teapot.json",
+                resource::getResource<vtfMaterial>("file://materials/vtf_test.json").castDynamic<material>());
+        engine::getRoot()->addChild(new mesh3d{teapot});
+
+        auto selawk = resource::getResource<fontResource>("file://fonts/default.json");
         ImGui::GetIO().FontDefault = selawk->getFont();
     });
     engine::init();
 
     engine::addRenderFunction([&teapot]() {
-        teapot->getMaterial()->getShader()->setUniform("p", engine::getMainCamera()->getProjectionMatrix());
-        teapot->getMaterial()->getShader()->setUniform("v", engine::getMainCamera()->getViewMatrix());
-        // todo: add dock space that respects top bar
+        teapot->getMaterial()->getShader()->use();
+        teapot->getMaterial()->getShader()->setUniform("p", engine::getRoot()->getMainCamera()->getProjection());
+        teapot->getMaterial()->getShader()->setUniform("v", engine::getRoot()->getMainCamera()->getView());
+
         setupImGuiStyle();
+        // todo: add dock space that respects top bar
         renderMenuBar();
     });
     engine::run();

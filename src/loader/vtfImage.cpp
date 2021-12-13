@@ -1,13 +1,16 @@
 #include "vtfImage.h"
-#include "../../external/ChiraEngine/src/core/engine.h"
+
+#include <core/engine.h>
+#include <i18n/translationManager.h>
+#include <fmt/core.h>
+
+using namespace chira;
 
 vtfImage::vtfImage(const unsigned char* buffer, std::size_t bufferLen, bool vFlip, int currentFrame, int face) {
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
-    if (!tmpFile.Load(buffer, bufferLen - 1)) {
-        // todo(i18n)
-        logger::log(ERR, "VTFImage", "Could not load VTF from buffer");
-    }
+    if (!tmpFile.Load(buffer, bufferLen - 1))
+        logger::log(ERR, "VTF Image", TR("error.vtfimage.load_from_buffer"));
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(
             tmpFile.GetData(currentFrame, 0, face, 0),
@@ -26,10 +29,8 @@ vtfImage::vtfImage(const unsigned char* buffer, std::size_t bufferLen, unsigned 
 vtfImage::vtfImage(const std::string& filepath, bool vFlip, int currentFrame, int face) {
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
-    if (!tmpFile.Load(filepath.c_str())) {
-        // todo(i18n)
-        chira::logger::log(ERR, "VTFImage", "Could not load VTF at " + filepath);
-    }
+    if (!tmpFile.Load(filepath.c_str()))
+        chira::logger::log(ERR, "VTF Image", fmt::format(TR("error.vtfimage.load_from_file"), filepath));
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(
             tmpFile.GetData(currentFrame, 0, face, 0),

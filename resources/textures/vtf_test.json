@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "image": "file://textures/vtf_test.vtf"
+  },
+  "properties": {}
+}

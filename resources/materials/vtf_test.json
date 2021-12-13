@@ -1,6 +1,6 @@
 {
   "dependencies": {
     "shader": "file://shaders/unlitTextured.json",
-    "texture": "file://textures/vtf_test.vtf"
+    "texture": "file://textures/vtf_test.json"
   }
 }

@@ -4,3 +4,6 @@
 [submodule "external/speedykv"]
 	path = external/speedykv
 	url = https://github.com/ozxybox/SpeedyKeyV
+[submodule "external/engine"]
+	path = external/engine
+	url = https://github.com/craftablescience/ChiraEngine

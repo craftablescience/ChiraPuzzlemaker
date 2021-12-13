@@ -1,0 +1,7 @@
+{
+  "ui.discord.debug_build": "Debug Build",
+  "ui.discord.release_build": "Release Build",
+
+  "error.vtfimage.load_from_buffer": "Could not load VTF from buffer",
+  "error.vtfimage.load_from_file": "Could not load VTF at \"{}\""
+}
