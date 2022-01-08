@@ -6,11 +6,11 @@
 
 using namespace chira;
 
-vtfImage::vtfImage(const unsigned char* buffer, std::size_t bufferLen, bool vFlip, int currentFrame, int face) {
+VTFImage::VTFImage(const unsigned char* buffer, std::size_t bufferLen, bool vFlip, int currentFrame, int face) {
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
     if (!tmpFile.Load(buffer, bufferLen - 1))
-        logger::log(ERR, "VTF Image", TR("error.vtfimage.load_from_buffer"));
+        Logger::log(LogType::ERROR, "VTF Image", TR("error.vtfimage.load_from_buffer"));
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(
             tmpFile.GetData(currentFrame, 0, face, 0),
@@ -20,17 +20,17 @@ vtfImage::vtfImage(const unsigned char* buffer, std::size_t bufferLen, bool vFli
             tmpFile.GetFormat());
 }
 
-vtfImage::vtfImage(const unsigned char* buffer, std::size_t bufferLen, unsigned int* width, unsigned int* height, int* glFormat, bool vFlip, int currentFrame, int face) : vtfImage(buffer, bufferLen, vFlip, currentFrame, face) {
+VTFImage::VTFImage(const unsigned char* buffer, std::size_t bufferLen, unsigned int* width, unsigned int* height, int* glFormat, bool vFlip, int currentFrame, int face) : VTFImage(buffer, bufferLen, vFlip, currentFrame, face) {
     *width = this->vtf.GetWidth();
     *height = this->vtf.GetHeight();
     *glFormat = this->getGLFormat();
 }
 
-vtfImage::vtfImage(const std::string& filepath, bool vFlip, int currentFrame, int face) {
+VTFImage::VTFImage(const std::string& filepath, bool vFlip, int currentFrame, int face) {
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
     if (!tmpFile.Load(filepath.c_str()))
-        chira::logger::log(ERR, "VTF Image", fmt::format(TR("error.vtfimage.load_from_file"), filepath));
+        Logger::log(LogType::ERROR, "VTF Image", fmt::format(TR("error.vtfimage.load_from_file"), filepath));
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(
             tmpFile.GetData(currentFrame, 0, face, 0),
@@ -40,32 +40,31 @@ vtfImage::vtfImage(const std::string& filepath, bool vFlip, int currentFrame, in
             tmpFile.GetFormat());
 }
 
-vtfImage::vtfImage(const std::string& filepath, unsigned int* width, unsigned int* height, int* glFormat, bool vFlip, int currentFrame, int face) : vtfImage(filepath, vFlip, currentFrame, face) {
+VTFImage::VTFImage(const std::string& filepath, unsigned int* width, unsigned int* height, int* glFormat, bool vFlip, int currentFrame, int face) : VTFImage(filepath, vFlip, currentFrame, face) {
     *width = this->vtf.GetWidth();
     *height = this->vtf.GetHeight();
     *glFormat = this->getGLFormat();
 }
 
-vtfImage::~vtfImage() {
+VTFImage::~VTFImage() {
     this->vtf.Destroy();
 }
 
-unsigned int vtfImage::getWidth() {
+unsigned int VTFImage::getWidth() const {
     return vtf.GetWidth();
 }
 
-unsigned int vtfImage::getHeight() {
+unsigned int VTFImage::getHeight() const {
     return vtf.GetHeight();
 }
 
-int vtfImage::getGLFormat() {
-    if (VTFLib::CVTFFile::GetImageFormatInfo(this->vtf.GetFormat()).uiAlphaBitsPerPixel > 0) {
+int VTFImage::getGLFormat() const {
+    if (VTFLib::CVTFFile::GetImageFormatInfo(this->vtf.GetFormat()).uiAlphaBitsPerPixel > 0)
         return GL_RGBA;
-    } else {
+    else
         return GL_RGB;
-    }
 }
 
-unsigned char* vtfImage::getData() {
+unsigned char* VTFImage::getData() const {
     return reinterpret_cast<unsigned char*>(this->vtf.GetData(0, 0, 0, 0));
 }

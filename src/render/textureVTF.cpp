@@ -1,18 +1,17 @@
-#include "vtfTexture.h"
+#include "textureVTF.h"
 
-void vtfTexture::compile(const nlohmann::json& properties) {
+void TextureVTF::compile(const nlohmann::json& properties) {
     this->format = getFormatFromString(getPropertyOrDefault<std::string>(properties["properties"], "format", std::string("RGBA")));
     this->wrapModeS = getWrapModeFromString(getPropertyOrDefault<std::string>(properties["properties"], "wrap_mode_s", "REPEAT"));
     this->wrapModeT = getWrapModeFromString(getPropertyOrDefault<std::string>(properties["properties"], "wrap_mode_t", "REPEAT"));
     this->filterMode = getFilterModeFromString(getPropertyOrDefault<std::string>(properties["properties"], "filter_mode", "LINEAR"));
     this->mipmaps = getPropertyOrDefault<bool>(properties["properties"], "mipmaps", true);
-    auto vtf = resource::getResource<vtfTextureResource>(properties["dependencies"]["image"], getPropertyOrDefault<bool>(properties["properties"], "vertical_flip", true));
+    auto vtf = Resource::getResource<VTFTextureResource>(properties["dependencies"]["image"], getPropertyOrDefault<bool>(properties["properties"], "vertical_flip", true));
 
-    if (this->activeTextureUnit == -1) {
+    if (this->activeTextureUnit == -1)
         glActiveTexture(GL_TEXTURE0);
-    } else {
+    else
         glActiveTexture(this->activeTextureUnit);
-    }
     glBindTexture(GL_TEXTURE_2D, this->handle);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapModeS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapModeT);
@@ -21,13 +20,12 @@ void vtfTexture::compile(const nlohmann::json& properties) {
 
     if (vtf.get() && vtf->getData()) {
         glTexImage2D(GL_TEXTURE_2D, 0, this->format, vtf->getWidth(), vtf->getHeight(), 0, this->format, GL_UNSIGNED_BYTE, vtf->getData());
-        if (this->mipmaps) {
+        if (this->mipmaps)
             glGenerateMipmap(GL_TEXTURE_2D);
-        }
     } else {
-        logger::log(ERR, "VTF Texture", TR("error.opengl.texture_compile"));
+        Logger::log(LogType::ERROR, "VTF Texture", TR("error.opengl.texture_compile"));
     }
 
     if (this->cache)
-        this->file = vtf.castDynamic<textureResource>();
+        this->file = vtf.castDynamic<TextureResource>();
 }
