@@ -1,5 +1,6 @@
 #include <string>
 #include <core/engine.h>
+#include <input/inputManager.h>
 #include <entity/imgui/console/console.h>
 #include <resource/provider/filesystemResourceProvider.h>
 #include <hook/discordRPC.h>
@@ -126,23 +127,17 @@ int main() {
     Resource::addResourceProvider(new FilesystemResourceProvider{"editor"});
     TranslationManager::addTranslationFile("file://i18n/editor");
     TranslationManager::addUniversalFile("file://i18n/editor");
-    Engine::getSettingsLoader()->setValue("engine", "title", std::string("Chira Editor"), true, true);
-
-    // Decreases the max number of lights, there's no need for as many as the engine default
-    Engine::getSettingsLoader()->setValue("engine", "maxPointLights", 8, false, false);
-    Engine::getSettingsLoader()->setValue("engine", "maxDirectionalLights", 1, false, false);
-    Engine::getSettingsLoader()->setValue("engine", "maxSpotLights", 1, false, false);
 
 #if DEBUG
-    Engine::addKeybind(Keybind(GLFW_KEY_ESCAPE, GLFW_PRESS, []() {
+    InputManager::addCallback(InputKeyButton{Key::ESCAPE, InputKeyEventType::PRESSED, []{
         Engine::stop();
-    }));
-    Engine::addKeybind(Keybind(GLFW_KEY_GRAVE_ACCENT, GLFW_PRESS, []() {
+    }});
+    InputManager::addCallback(InputKeyButton{Key::GRAVE_ACCENT, InputKeyEventType::PRESSED, []{
         Engine::getConsole()->setVisible(!Engine::getConsole()->isVisible());
-    }));
+    }});
 #endif
 
-    Engine::addInitFunction([]() {
+    Engine::addInitFunction([]{
         DiscordRPC::init(TR("editor.discord.application_id"));
         DiscordRPC::setLargeImage("main_logo");
         DiscordRPC::setDetails("https://discord.gg/ASgHFkX");
@@ -165,7 +160,7 @@ int main() {
     });
     Engine::init();
 
-    Engine::addRenderFunction([]() {
+    Engine::addRenderFunction([]{
         setupImGuiStyle();
         // todo: add dock space that respects top bar
         renderMenuBar();
