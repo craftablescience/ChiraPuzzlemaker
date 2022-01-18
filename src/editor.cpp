@@ -7,8 +7,10 @@
 #include <i18n/translationManager.h>
 #include <entity/3d/camera/editorCamera3d.h>
 #include <entity/3d/model/mesh3d.h>
+#include <hook/steamAPI.h>
 
-#include "render/materialVTF.h" // necessary to register in material factory
+// necessary to register in material factory
+#include "render/materialVTF.h"
 
 using namespace chira;
 
@@ -137,6 +139,10 @@ int main() {
     }});
 #endif
 
+    // We are totally P2CE
+    Engine::getSettingsLoader()->setValue("engine", "steamworks", true, true, true);
+    SteamAPI::generateAppIDFile(440000);
+
     Engine::addInitFunction([]{
         DiscordRPC::init(TR("editor.discord.application_id"));
         DiscordRPC::setLargeImage("main_logo");
@@ -150,7 +156,8 @@ int main() {
 
         auto camera = new EditorCamera3d{CameraProjectionMode::PERSPECTIVE};
         Engine::getRoot()->addChild(camera);
-        Engine::getRoot()->setMainCamera(camera);
+        Engine::getRoot()->setCamera(camera);
+        EditorCamera3d::setupKeybinds();
 
         auto teapot = Resource::getResource<MeshResource>("file://meshes/teapot.json");
         Engine::getRoot()->addChild(new Mesh3d{teapot});

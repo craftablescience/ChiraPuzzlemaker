@@ -3,7 +3,7 @@
 #include <render/material/materialUntextured.h>
 #include "textureVTF.h"
 
-class MaterialVTF : public MaterialUntextured {
+class MaterialVTF : public chira::MaterialUntextured {
 public:
     explicit MaterialVTF(const std::string& identifier_) : MaterialUntextured(identifier_) {}
     void compile(const nlohmann::json& properties) override;

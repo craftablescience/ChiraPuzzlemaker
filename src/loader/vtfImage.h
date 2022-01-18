@@ -4,9 +4,7 @@
 #undef ERROR
 #include <loader/image/image.h>
 
-using namespace chira;
-
-class VTFImage : public AbstractImage {
+class VTFImage : public chira::AbstractImage {
 public:
     VTFImage(const unsigned char* buffer, std::size_t bufferLen, bool vFlip = false, int currentFrame = 0, int face = 0);
     VTFImage(const unsigned char* buffer, std::size_t bufferLen, unsigned int* width, unsigned int* height, int* glFormat, bool vFlip = false, int currentFrame = 0, int face = 0);

@@ -5,9 +5,7 @@
 #include <resource/vtfTextureResource.h>
 #include <i18n/translationManager.h>
 
-using namespace chira;
-
-class TextureVTF : public Texture {
+class TextureVTF : public chira::Texture {
 public:
     explicit TextureVTF(const std::string& identifier_, bool cacheTexture = true) : Texture(identifier_, cacheTexture) {}
     void compile(const nlohmann::json& properties) override;

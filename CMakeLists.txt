@@ -10,18 +10,14 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-string(TOLOWER "${CMAKE_CXX_COMPILER_ID}" COMPILER_ID)
-
-if(UNIX OR MINGW)
-    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Chira Engine
-set(CHIRA_BUILD_TESTS         OFF CACHE BOOL "" FORCE)
-set(CHIRA_BUILD_WITH_WARNINGS OFF CACHE BOOL "" FORCE)
-set(CHIRA_BUILD_EDITOR        OFF CACHE BOOL "" FORCE)
-set(CHIRA_BUILD_MODEL_VIEWER  OFF CACHE BOOL "" FORCE)
+set(CHIRA_BUILD_TESTS           OFF CACHE BOOL "" FORCE)
+set(CHIRA_BUILD_WITH_WARNINGS   OFF CACHE BOOL "" FORCE)
+set(CHIRA_BUILD_EDITOR          OFF CACHE BOOL "" FORCE)
+set(CHIRA_BUILD_MODEL_VIEWER    OFF CACHE BOOL "" FORCE)
+set(CHIRA_BUILD_WITH_STEAMWORKS ON  CACHE BOOL "" FORCE)
 add_subdirectory(external/engine)
 
 # SpeedyKeyV
@@ -48,14 +44,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${VTFLIB_INCLUDE_DIRS})
 target_compile_definitions(${PROJECT_NAME} PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD2)
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(${PROJECT_NAME} PUBLIC -DDEBUG)
-    if(COMPILER_ID MATCHES "clang")
+    if(CHIRA_COMPILER_CLANG)
         target_compile_options(${PROJECT_NAME} PUBLIC -fno-limit-debug-info)
     endif()
     if(UNIX OR MINGW)
         # On UNIX, build with debug friendly optimizations and debug symbols
         # On windows, just disable optimizations entirely
         target_compile_options(${PROJECT_NAME} PUBLIC -Og -g)
-    elseif(MSVC)
+    elseif(CHIRA_COMPILER_MSVC)
         target_compile_options(${PROJECT_NAME} PUBLIC /Od)
     endif()
 elseif(CMAKE_BUILD_TYPE MATCHES Release)
@@ -63,9 +59,15 @@ elseif(CMAKE_BUILD_TYPE MATCHES Release)
     # Build with max optimizations and don't omit stack ptr for debugging reasons
     if(UNIX OR MINGW)
         target_compile_options(${PROJECT_NAME} PUBLIC -O3 -fno-omit-frame-pointer)
-    elseif(MSVC)
+    elseif(CHIRA_COMPILER_MSVC)
         target_compile_options(${PROJECT_NAME} PUBLIC /O2)
     endif()
+endif()
+
+if(UNIX OR MINGW)
+    target_compile_options(${PROJECT_NAME} PUBLIC -Wall)
+elseif(CHIRA_COMPILER_MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC /W4) # not all, because MSVC has loads of idiotic errors
 endif()
 
 # Resources provided by the engine

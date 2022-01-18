@@ -1,5 +1,7 @@
 #include "textureVTF.h"
 
+using namespace chira;
+
 void TextureVTF::compile(const nlohmann::json& properties) {
     this->format = getFormatFromString(getPropertyOrDefault<std::string>(properties["properties"], "format", std::string("RGBA")));
     this->wrapModeS = getWrapModeFromString(getPropertyOrDefault<std::string>(properties["properties"], "wrap_mode_s", "REPEAT"));
