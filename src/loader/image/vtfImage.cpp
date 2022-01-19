@@ -30,7 +30,7 @@ VTFImage::VTFImage(const std::string& filepath, bool vFlip, int currentFrame, in
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
     if (!tmpFile.Load(filepath.c_str()))
-        Logger::log(LogType::ERROR, "VTF Image", fmt::format(TR("error.vtfimage.load_from_file"), filepath));
+        Logger::log(LogType::ERROR, "VTF Image", TRF("error.vtfimage.load_from_file", filepath));
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(
             tmpFile.GetData(currentFrame, 0, face, 0),

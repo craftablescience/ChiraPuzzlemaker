@@ -1,6 +1,6 @@
 #pragma once
 
-#include <loader/vtfImage.h>
+#include <loader/image/vtfImage.h>
 #include <resource/textureResource.h>
 
 class VTFTextureResource : public chira::TextureResource {

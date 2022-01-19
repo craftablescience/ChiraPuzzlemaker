@@ -2,6 +2,15 @@
   "ui.discord.debug_build": "Debug Build",
   "ui.discord.release_build": "Release Build",
 
+  "warn.vpk.invalid_terminator": "Invalid terminator in entry \"{}\"",
+
+  "error.vpk.file_is_not_vpk": "Given file is not a VPK!",
+  "error.vpk.respawn_format": "Respawn Source VPK files are not supported!",
+  "error.vpk.bad_version": "Bad VPK version: {}",
+  "error.vpk.md5_section_bad_size": "Encountered OtherMD5Section with size of {} (should be 48)",
+  "error.vpk.extension_not_found": "VPK entry does not have this extension!",
+  "error.vpk.not_dir_archive": "Given VPK filename does not end in \"_dir.vpk\", but entry is referencing an external archive!",
+  "error.vpk.file_not_found": "VPK at \"{}\" not found!",
   "error.vtfimage.load_from_buffer": "Could not load VTF from buffer",
   "error.vtfimage.load_from_file": "Could not load VTF at \"{}\""
 }

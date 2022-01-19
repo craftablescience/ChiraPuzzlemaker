@@ -1,16 +1,21 @@
 #include <string>
 #include <core/engine.h>
+#ifdef DEBUG
 #include <input/inputManager.h>
+#endif
 #include <entity/imgui/console/console.h>
 #include <resource/provider/filesystemResourceProvider.h>
+#include <resource/provider/vpkResourceProvider.h>
 #include <hook/discordRPC.h>
 #include <i18n/translationManager.h>
 #include <entity/3d/camera/editorCamera3d.h>
 #include <entity/3d/model/mesh3d.h>
 #include <hook/steamAPI.h>
+#include <utility/dialogs.h>
 
 // necessary to register in material factory
 #include "render/materialVTF.h"
+#include "resource/stringResource.h"
 
 using namespace chira;
 
@@ -130,7 +135,7 @@ int main() {
     TranslationManager::addTranslationFile("file://i18n/editor");
     TranslationManager::addUniversalFile("file://i18n/editor");
 
-#if DEBUG
+#ifdef DEBUG
     InputManager::addCallback(InputKeyButton{Key::ESCAPE, InputKeyEventType::PRESSED, []{
         Engine::stop();
     }});
@@ -142,6 +147,20 @@ int main() {
     // We are totally P2CE
     Engine::getSettingsLoader()->setValue("engine", "steamworks", true, true, true);
     SteamAPI::generateAppIDFile(440000);
+    if (!SteamAPI::Client::initSteam()) {
+        dialogPopupError("Steam must be running to launch this application.");
+        return EXIT_FAILURE;
+    }
+
+    // Need to do this after steam
+    // todo: load these from p2ce's gameinfo.txt
+    Resource::addResourceProvider(new VPKResourceProvider{620, "portal2/pak01_dir.vpk"});
+    Resource::addResourceProvider(VPKResourceProvider::getFilesystemResourceProvider(620, "portal2"));
+    Resource::addResourceProvider(new VPKResourceProvider{620, "portal2_dlc1/pak01_dir.vpk"});
+    Resource::addResourceProvider(VPKResourceProvider::getFilesystemResourceProvider(620, "portal2_dlc1"));
+    Resource::addResourceProvider(new VPKResourceProvider{620, "portal2_dlc2/pak01_dir.vpk"});
+    Resource::addResourceProvider(VPKResourceProvider::getFilesystemResourceProvider(620, "portal2_dlc2"));
+    Resource::addResourceProvider(VPKResourceProvider::getFilesystemResourceProvider(440000, "p2ce"));
 
     Engine::addInitFunction([]{
         DiscordRPC::init(TR("editor.discord.application_id"));

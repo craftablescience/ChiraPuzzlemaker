@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "image": "file://textures/vtf_test.vtf"
+    "image": "source://materials/metal/black_floor_metal_004a.vtf"
   },
   "properties": {}
 }
