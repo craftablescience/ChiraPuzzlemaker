@@ -15,7 +15,6 @@
 
 // necessary to register in material factory
 #include "render/materialVTF.h"
-#include "resource/stringResource.h"
 
 using namespace chira;
 
@@ -148,7 +147,7 @@ int main() {
     Engine::getSettingsLoader()->setValue("engine", "steamworks", true, true, true);
     SteamAPI::generateAppIDFile(440000);
     if (!SteamAPI::Client::initSteam()) {
-        dialogPopupError("Steam must be running to launch this application.");
+        dialogPopupError(TR("error.editor.steam_not_running"));
         return EXIT_FAILURE;
     }
 
@@ -166,7 +165,7 @@ int main() {
         DiscordRPC::init(TR("editor.discord.application_id"));
         DiscordRPC::setLargeImage("main_logo");
         DiscordRPC::setDetails("https://discord.gg/ASgHFkX");
-#if DEBUG
+#ifdef DEBUG
         DiscordRPC::setState(TR("ui.discord.debug_build"));
 #else
         DiscordRPC::setState(TR("ui.discord.release_build"));

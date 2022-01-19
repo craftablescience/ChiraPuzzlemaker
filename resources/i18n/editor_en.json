@@ -1,9 +1,12 @@
 {
+  "ui.window.title": "Chira Editor",
+
   "ui.discord.debug_build": "Debug Build",
   "ui.discord.release_build": "Release Build",
 
   "warn.vpk.invalid_terminator": "Invalid terminator in entry \"{}\"",
 
+  "error.editor.steam_not_running": "Steam must be running to launch this application.",
   "error.vpk.file_is_not_vpk": "Given file is not a VPK!",
   "error.vpk.respawn_format": "Respawn Source VPK files are not supported!",
   "error.vpk.bad_version": "Bad VPK version: {}",
