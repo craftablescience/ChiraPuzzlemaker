@@ -11,5 +11,5 @@ public:
 protected:
     chira::SharedPointer<TextureVTF> vtfTex;
 private:
-    REGISTER_MATERIAL_TYPE(MaterialVTF);
+    CHIRA_REGISTER_MATERIAL_TYPE(MaterialVTF);
 };

@@ -5,9 +5,6 @@
     "materialType": "MaterialVTF"
   },
   "properties": {
-    "loader": "cmdl",
-    "depthFunction": "LEQUAL",
-    "backfaceCulling": true,
-    "cullType": "BACK"
+    "loader": "cmdl"
   }
 }

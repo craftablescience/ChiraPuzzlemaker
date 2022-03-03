@@ -3,18 +3,19 @@
 #ifdef DEBUG
 #include <input/inputManager.h>
 #endif
-#include <entity/imgui/console/console.h>
 #include <resource/provider/filesystemResourceProvider.h>
 #include <resource/provider/vpkResourceProvider.h>
 #include <hook/discordRPC.h>
 #include <i18n/translationManager.h>
-#include <entity/3d/camera/editorCamera3d.h>
-#include <entity/3d/model/mesh3d.h>
+#include <entity/camera/editorCamera.h>
+#include <entity/model/mesh.h>
+#include <entity/logic/customEntity.h>
 #include <hook/steamAPI.h>
 #include <utility/dialogs.h>
+#include <resource/fontResource.h>
 
 // necessary to register in material factory
-#include "render/materialVTF.h"
+#include <render/materialVTF.h>
 
 using namespace chira;
 
@@ -108,7 +109,7 @@ void renderMenuBar() {
             }
             if (ImGui::MenuItem(TRC("ui.menubar.exit"))) {
                 // Maybe save the map before exiting, or ask to save
-                Engine::stop();
+                Engine::getWindow()->shouldStopAfterThisFrame();
             }
             ImGui::EndMenu();
         }
@@ -129,18 +130,18 @@ void renderMenuBar() {
 }
 
 int main() {
-    Engine::preInit();
+    Engine::preInit("settings_puzzlemakerpp.json");
     Resource::addResourceProvider(new FilesystemResourceProvider{"editor"});
     TranslationManager::addTranslationFile("file://i18n/editor");
     TranslationManager::addUniversalFile("file://i18n/editor");
 
+    DiscordRPC::init(TR("editor.discord.application_id"));
+    DiscordRPC::setLargeImage("main_logo");
+    DiscordRPC::setDetails("https://discord.gg/ASgHFkX");
 #ifdef DEBUG
-    InputManager::addCallback(InputKeyButton{Key::ESCAPE, InputKeyEventType::PRESSED, []{
-        Engine::stop();
-    }});
-    InputManager::addCallback(InputKeyButton{Key::GRAVE_ACCENT, InputKeyEventType::PRESSED, []{
-        Engine::getConsole()->setVisible(!Engine::getConsole()->isVisible());
-    }});
+    DiscordRPC::setState(TR("ui.discord.debug_build"));
+#else
+    DiscordRPC::setState(TR("ui.discord.release_build"));
 #endif
 
     // We are totally P2CE
@@ -150,6 +151,12 @@ int main() {
         dialogPopupError(TR("error.editor.steam_not_running"));
         return EXIT_FAILURE;
     }
+
+#ifdef DEBUG
+    InputManager::addCallback(InputKeyButton{Key::ESCAPE, InputKeyEventType::PRESSED, []{
+        Engine::getWindow()->shouldStopAfterThisFrame();
+    }});
+#endif
 
     // Need to do this after steam
     // todo: load these from p2ce's gameinfo.txt
@@ -161,34 +168,24 @@ int main() {
     Resource::addResourceProvider(VPKResourceProvider::getFilesystemResourceProvider(620, "portal2_dlc2"));
     Resource::addResourceProvider(VPKResourceProvider::getFilesystemResourceProvider(440000, "p2ce"));
 
-    Engine::addInitFunction([]{
-        DiscordRPC::init(TR("editor.discord.application_id"));
-        DiscordRPC::setLargeImage("main_logo");
-        DiscordRPC::setDetails("https://discord.gg/ASgHFkX");
-#ifdef DEBUG
-        DiscordRPC::setState(TR("ui.discord.debug_build"));
-#else
-        DiscordRPC::setState(TR("ui.discord.release_build"));
-#endif
-        Engine::setBackgroundColor(ColorRGB{0.9098f, 0.9137f, 0.9098f});
+    Engine::init([]{
+        Engine::getWindow()->setBackgroundColor({0.9098f, 0.9137f, 0.9098f});
 
-        auto camera = new EditorCamera3d{CameraProjectionMode::PERSPECTIVE};
-        Engine::getRoot()->addChild(camera);
-        Engine::getRoot()->setCamera(camera);
-        EditorCamera3d::setupKeybinds();
+        auto camera = new EditorCamera{CameraProjectionMode::PERSPECTIVE};
+        Engine::getWindow()->addChild(camera);
+        Engine::getWindow()->setCamera(camera);
+        EditorCamera::setupKeybinds();
 
-        auto teapot = Resource::getResource<MeshResource>("file://meshes/teapot.json");
-        Engine::getRoot()->addChild(new Mesh3d{teapot});
+        Engine::getWindow()->addChild(new Mesh{"file://meshes/teapot.json"});
 
         auto selawk = Resource::getResource<FontResource>("file://fonts/default.json");
         ImGui::GetIO().FontDefault = selawk->getFont();
-    });
-    Engine::init();
 
-    Engine::addRenderFunction([]{
-        setupImGuiStyle();
-        // todo: add dock space that respects top bar
-        renderMenuBar();
+        Engine::getWindow()->addChild(new CustomEntity{[](glm::mat4){
+            setupImGuiStyle();
+            // todo: add dock space that respects top bar
+            renderMenuBar();
+        }});
     });
     Engine::run();
 }

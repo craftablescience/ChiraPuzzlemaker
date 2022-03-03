@@ -9,6 +9,6 @@ void MaterialVTF::compile(const nlohmann::json& properties) {
 }
 
 void MaterialVTF::use() const {
-    this->vtfTex->use();
     MaterialUntextured::use();
+    this->vtfTex->use();
 }
