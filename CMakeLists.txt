@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.15)
-project(ChiraEditor)
-set(CMAKE_CXX_STANDARD 17)
+cmake_minimum_required(VERSION 3.16)
+project(ChiraPuzzlemaker)
+set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
@@ -16,9 +16,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CHIRA_BUILD_TESTS           OFF CACHE BOOL "" FORCE)
 set(CHIRA_BUILD_WITH_WARNINGS   OFF CACHE BOOL "" FORCE)
 set(CHIRA_BUILD_EDITOR          OFF CACHE BOOL "" FORCE)
-set(CHIRA_BUILD_MODEL_VIEWER    OFF CACHE BOOL "" FORCE)
-set(CHIRA_BUILD_WITH_STEAMWORKS ON  CACHE BOOL "" FORCE)
+set(CHIRA_USE_STEAMWORKS        ON  CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(external/engine)
+set(BUILD_SHARED_LIBS ON)
 
 # SpeedyKeyV
 add_subdirectory(external/speedykv)
@@ -27,18 +28,19 @@ add_subdirectory(external/speedykv)
 set(USE_LIBTXC_DXTN OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/VTFLib)
 
-include(src/loader/CMakeLists.txt)
-include(src/render/CMakeLists.txt)
-include(src/resource/CMakeLists.txt)
-list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/editor.cpp)
+include(src/CMakeLists.txt)
 if(WIN32)
-    list(APPEND EDITOR_SOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/win32/project.rc)
+    list(APPEND PUZZLEMAKER_SOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/icon/icon.rc)
 endif()
+list(APPEND PUZZLEMAKER_SOURCES ${PUZZLEMAKER_HEADERS})
+add_executable(${PROJECT_NAME} ${PUZZLEMAKER_SOURCES})
+apply_optimizations(${PROJECT_NAME})
+#target_precompile_headers(${PUZZLEMAKER_HEADERS})
 
-add_executable(${PROJECT_NAME} ${EDITOR_SOURCES})
 target_link_libraries(${PROJECT_NAME} ChiraEngine ${OPENGL_LIBRARIES} ${VTFLIB_LIBRARIES} VTFLib13 keyvalues)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(${PROJECT_NAME} PUBLIC ${VTFLIB_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${VTFLIB_INCLUDE_DIRS})
 
 # Definitions
 target_compile_definitions(${PROJECT_NAME} PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD2)
@@ -70,16 +72,9 @@ elseif(CHIRA_COMPILER_MSVC)
     target_compile_options(${PROJECT_NAME} PUBLIC /W4) # not all, because MSVC has loads of idiotic errors
 endif()
 
-# Resources provided by the engine
-add_custom_target(copyEngineResources ALL
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/external/engine/resources/engine/
-        ${CMAKE_BINARY_DIR}/resources/engine/)
-add_dependencies(${PROJECT_NAME} copyEngineResources)
-
 # Resources provided by the editor
-add_custom_target(copyEditorResources ALL
+add_custom_target(CopyPuzzlemakerResources ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/resources/
-        ${CMAKE_BINARY_DIR}/resources/editor/)
-add_dependencies(${PROJECT_NAME} copyEditorResources)
+        ${CMAKE_BINARY_DIR}/resources/puzzlemaker/)
+add_dependencies(${PROJECT_NAME} CopyPuzzlemakerResources)

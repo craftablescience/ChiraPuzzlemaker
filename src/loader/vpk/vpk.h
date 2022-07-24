@@ -3,8 +3,9 @@
  * This port adds VPK1 support and removes CRC checks.
  */
 
+#include <string>
 #include <unordered_map>
-#include <utility/memory/fileInputStream.h>
+#include <utility/FileInputStream.h>
 
 struct VPKEntry {
     /// Gets or sets file name of this entry.
@@ -32,7 +33,7 @@ struct VPKEntry {
         return this->totalLength;
     }
     /// Gets or sets the preloaded bytes.
-    std::vector<chira::byte> smallData;
+    std::vector<byte> smallData;
 
     /// Returns the file name and extension.
     [[nodiscard]] std::string getFileName() const {
@@ -60,8 +61,8 @@ struct VPK {
         /// The length in bytes.
         std::uint32_t length;
         /// The expected Checksum checksum.
-        std::vector<chira::byte> checksum;
-        ArchiveMD5SectionEntry(std::uint32_t archiveIndex_, std::uint32_t offset_, std::uint32_t length_, std::vector<chira::byte> checksum_)
+        std::vector<byte> checksum;
+        ArchiveMD5SectionEntry(std::uint32_t archiveIndex_, std::uint32_t offset_, std::uint32_t length_, std::vector<byte> checksum_)
                 : archiveIndex(archiveIndex_)
                 , offset(offset_)
                 , length(length_)
@@ -81,7 +82,7 @@ struct VPK {
     /// Reads the entry from the VPK package.\n
     /// entry: Package entry\n
     /// output: Output buffer
-    void readEntry(const VPKEntry& entry, std::vector<chira::byte>& output) const;
+    void readEntry(const VPKEntry& entry, std::vector<byte>& output) const;
 
     bool isDirVPK = false;
     unsigned int headerSize = 0;
@@ -100,15 +101,15 @@ struct VPK {
     /// Gets the size in bytes of the section containing the public key and signature.
     unsigned int signatureSectionSize = 0;
     /// Gets the MD5 checksum of the file tree.
-    std::vector<chira::byte> treeChecksum;
+    std::vector<byte> treeChecksum;
     /// Gets the MD5 checksum of the archive MD5 checksum section entries.
-    std::vector<chira::byte> archiveMD5EntriesChecksum;
+    std::vector<byte> archiveMD5EntriesChecksum;
     /// Gets the MD5 checksum of the complete package until the signature structure.
-    std::vector<chira::byte> wholeFileChecksum;
+    std::vector<byte> wholeFileChecksum;
     /// Gets the public key.
-    std::vector<chira::byte> publicKey;
+    std::vector<byte> publicKey;
     /// Gets the signature.
-    std::vector<chira::byte> signature;
+    std::vector<byte> signature;
     /// Gets the package entries.
     std::unordered_map<std::string, std::vector<VPKEntry>> entries;
     /// Gets the archive MD5 checksum section entries. Also known as cache line hashes.

@@ -1,5 +1,7 @@
-list(APPEND EDITOR_SOURCES
-        ${CMAKE_CURRENT_LIST_DIR}/materialVTF.cpp
+list(APPEND PUZZLEMAKER_HEADERS
         ${CMAKE_CURRENT_LIST_DIR}/materialVTF.h
-        ${CMAKE_CURRENT_LIST_DIR}/textureVTF.cpp
         ${CMAKE_CURRENT_LIST_DIR}/textureVTF.h)
+
+list(APPEND PUZZLEMAKER_SOURCES
+        ${CMAKE_CURRENT_LIST_DIR}/materialVTF.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/textureVTF.cpp)

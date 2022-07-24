@@ -1,9 +1,9 @@
-[submodule "external/VTFLib"]
-	path = external/VTFLib
-	url = https://github.com/panzi/VTFLib
-[submodule "external/speedykv"]
-	path = external/speedykv
-	url = https://github.com/ozxybox/SpeedyKeyV
 [submodule "external/engine"]
 	path = external/engine
 	url = https://github.com/craftablescience/ChiraEngine
+[submodule "external/speedykv"]
+	path = external/speedykv
+	url = https://github.com/ozxybox/SpeedyKeyV
+[submodule "external/VTFLib"]
+	path = external/VTFLib
+	url = https://github.com/JJL772/VTFLib

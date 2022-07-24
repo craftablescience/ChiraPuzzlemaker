@@ -1,4 +1,4 @@
-# Chira Editor
+# Chira Puzzlemaker
 ![Discord](https://img.shields.io/discord/678074864346857482?label=Discord&logo=Discord&logoColor=%23FFFFFF&style=flat-square)
 
 Yet another Portal 2 puzzlemaker, running on a custom engine.

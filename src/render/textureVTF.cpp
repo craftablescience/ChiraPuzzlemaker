@@ -1,14 +1,16 @@
 #include "textureVTF.h"
 
+#include <i18n/TranslationManager.h>
+
 using namespace chira;
 
 void TextureVTF::compile(const nlohmann::json& properties) {
-    this->format = getFormatFromString(getPropertyOrDefault<std::string>(properties["properties"], "format", std::string("RGBA")));
-    this->wrapModeS = getWrapModeFromString(getPropertyOrDefault<std::string>(properties["properties"], "wrap_mode_s", "REPEAT"));
-    this->wrapModeT = getWrapModeFromString(getPropertyOrDefault<std::string>(properties["properties"], "wrap_mode_t", "REPEAT"));
-    this->filterMode = getFilterModeFromString(getPropertyOrDefault<std::string>(properties["properties"], "filter_mode", "LINEAR"));
-    this->mipmaps = getPropertyOrDefault<bool>(properties["properties"], "mipmaps", true);
-    auto vtf = Resource::getResource<VTFTextureResource>(properties["dependencies"]["image"], getPropertyOrDefault<bool>(properties["properties"], "vertical_flip", true));
+    this->format = getFormatFromString(getProperty<std::string>(properties["properties"], "format", std::string("RGBA")));
+    this->wrapModeS = getWrapModeFromString(getProperty<std::string>(properties["properties"], "wrap_mode_s", "REPEAT"));
+    this->wrapModeT = getWrapModeFromString(getProperty<std::string>(properties["properties"], "wrap_mode_t", "REPEAT"));
+    this->filterMode = getFilterModeFromString(getProperty<std::string>(properties["properties"], "filter_mode", "LINEAR"));
+    this->mipmaps = getProperty<bool>(properties["properties"], "mipmaps", true);
+    auto vtf = Resource::getResource<VTFTextureResource>(properties["dependencies"]["image"], getProperty<bool>(properties["properties"], "vertical_flip", true));
 
     if (this->activeTextureUnit == -1)
         glActiveTexture(GL_TEXTURE0);
@@ -25,7 +27,7 @@ void TextureVTF::compile(const nlohmann::json& properties) {
         if (this->mipmaps)
             glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-        Logger::log(LogType::ERROR, "VTF Texture", TR("error.opengl.texture_compile"));
+        Logger::log(LogType::LOG_ERROR, "VTF Texture", TR("error.opengl.texture_compile"));
     }
 
     if (this->cache)

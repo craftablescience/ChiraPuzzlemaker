@@ -1,10 +1,11 @@
 #pragma once
 
+#include <string>
 #include "../../external/VTFLib/src/VTFLib.h"
 #undef ERROR
-#include <loader/image/image.h>
+#include <loader/image/IImage.h>
 
-class VTFImage : public chira::AbstractImage {
+class VTFImage : public chira::IImage {
 public:
     VTFImage(const unsigned char* buffer, std::size_t bufferLen, bool vFlip = false, int currentFrame = 0, int face = 0);
     VTFImage(const unsigned char* buffer, std::size_t bufferLen, unsigned int* width, unsigned int* height, int* glFormat, bool vFlip = false, int currentFrame = 0, int face = 0);

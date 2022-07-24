@@ -1,0 +1,2 @@
+list(APPEND PUZZLEMAKER_SOURCES
+        ${CMAKE_CURRENT_LIST_DIR}/Puzzlemaker.cpp)

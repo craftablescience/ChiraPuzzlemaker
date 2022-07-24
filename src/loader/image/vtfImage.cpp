@@ -1,8 +1,7 @@
 #include "vtfImage.h"
 
-#include <core/engine.h>
-#include <i18n/translationManager.h>
-#include <fmt/core.h>
+#include <core/Engine.h>
+#include <i18n/TranslationManager.h>
 
 using namespace chira;
 
@@ -10,7 +9,7 @@ VTFImage::VTFImage(const unsigned char* buffer, std::size_t bufferLen, bool vFli
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
     if (!tmpFile.Load(buffer, bufferLen - 1))
-        Logger::log(LogType::ERROR, "VTF Image", TR("error.vtfimage.load_from_buffer"));
+        Logger::log(LogType::LOG_ERROR, "VTF Image", TR("error.vtfimage.load_from_buffer"));
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(
             tmpFile.GetData(currentFrame, 0, face, 0),
@@ -30,7 +29,7 @@ VTFImage::VTFImage(const std::string& filepath, bool vFlip, int currentFrame, in
     // todo: use vFlip parameter
     VTFLib::CVTFFile tmpFile;
     if (!tmpFile.Load(filepath.c_str()))
-        Logger::log(LogType::ERROR, "VTF Image", TRF("error.vtfimage.load_from_file", filepath));
+        Logger::log(LogType::LOG_ERROR, "VTF Image", TRF("error.vtfimage.load_from_file", filepath));
     this->vtf.Create(tmpFile.GetWidth(), tmpFile.GetHeight());
     VTFLib::CVTFFile::ConvertToRGBA8888(
             tmpFile.GetData(currentFrame, 0, face, 0),

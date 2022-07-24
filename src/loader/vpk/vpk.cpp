@@ -5,27 +5,25 @@
 
 #include "vpk.h"
 
-#include <algorithm>
 #include <iterator>
-#include <i18n/translationManager.h>
-#include <resource/provider/filesystemResourceProvider.h>
-#include <utility/logger.h>
-#include <utility/string/stringContains.h>
-#include <utility/string/stringStrip.h>
+#include <core/Logger.h>
+#include <i18n/TranslationManager.h>
+#include <resource/provider/FilesystemResourceProvider.h>
+#include <utility/String.h>
 
 using namespace chira;
 
 VPK::VPK(const std::string& vpkName) : reader(vpkName) {
     this->fileName = vpkName;
-    if (endsWith(this->fileName, ".vpk"))
+    if (String::endsWith(this->fileName, ".vpk"))
         this->fileName = this->fileName.substr(0, this->fileName.length() - 4);
-    if (endsWith(this->fileName, "_dir")) {
+    if (String::endsWith(this->fileName, "_dir")) {
         this->isDirVPK = true;
         this->fileName = this->fileName.substr(0, this->fileName.length() - 4);
     }
     this->reader.seek(0, std::ios::beg);
     if (this->reader.read<std::uint32_t>() != 0x55AA1234) {
-        Logger::log(LogType::ERROR, "VPK", TR("error.vpk.file_is_not_vpk"));
+        Logger::log(LogType::LOG_ERROR, "VPK", TR("error.vpk.file_is_not_vpk"));
         return;
     }
 
@@ -39,9 +37,9 @@ VPK::VPK(const std::string& vpkName) : reader(vpkName) {
         this->signatureSectionSize  = this->reader.read<std::uint32_t>();
     } else if (this->version == 0x00030002)
         // Apex Legends, Titanfall
-        Logger::log(LogType::ERROR, "VPK", TR("error.vpk.respawn_format"));
+        Logger::log(LogType::LOG_ERROR, "VPK", TR("error.vpk.respawn_format"));
     else if (this->version != 1)
-        Logger::log(LogType::ERROR, "VPK", TRF("error.vpk.bad_version", this->version));
+        Logger::log(LogType::LOG_ERROR, "VPK", TRF("error.vpk.bad_version", this->version));
 
     this->headerSize = this->reader.tell();
 
@@ -76,7 +74,7 @@ VPK::VPK(const std::string& vpkName) : reader(vpkName) {
                 entry.length = this->reader.read<std::uint32_t>();
 
                 if (this->reader.read<std::uint16_t>() != 0xFFFF)
-                    Logger::log(LogType::WARNING, "VPK", TRF("warn.vpk.invalid_terminator", entry.fileName));
+                    Logger::log(LogType::LOG_WARNING, "VPK", TRF("warn.vpk.invalid_terminator", entry.fileName));
                 if (smallDataSize > 0)
                     entry.smallData = this->reader.readBytes(smallDataSize);
                 vpkEntries.push_back(entry);
@@ -104,7 +102,7 @@ VPK::VPK(const std::string& vpkName) : reader(vpkName) {
             );
 
         if (this->otherMD5SectionSize != 48)
-            Logger::log(LogType::ERROR, "VPK", TRF("error.vpk.md5_section_bad_size", this->otherMD5SectionSize));
+            Logger::log(LogType::LOG_ERROR, "VPK", TRF("error.vpk.md5_section_bad_size", this->otherMD5SectionSize));
         this->treeChecksum              = this->reader.readBytes(16);
         this->archiveMD5EntriesChecksum = this->reader.readBytes(16);
         this->wholeFileChecksum         = this->reader.readBytes(16);
@@ -141,13 +139,13 @@ VPKEntry VPK::findEntry(const std::string& directory, const std::string& fileNam
 
 VPKEntry VPK::findEntry(const std::string& directory, const std::string& fileName_, const std::string& extension) const {
     if (this->entries.count(extension) == 0) {
-        Logger::log(LogType::ERROR, "VPK", TR("error.vpk.extension_not_found"));
+        Logger::log(LogType::LOG_ERROR, "VPK", TR("error.vpk.extension_not_found"));
         return {};
     }
     std::string dir = directory;
     if (!dir.empty()) {
         FilesystemResourceProvider::nixifyPath(dir);
-        stripModify(dir, '/');
+        dir = String::strip(dir, '/');
     }
     // If the directory is empty after trimming, set it to a space to match Valve's behaviour
     else
@@ -169,19 +167,19 @@ void VPK::readEntry(const VPKEntry& entry, std::vector<byte>& output) const {
     if (entry.length > 0) {
         if (entry.archiveIndex != 0x7FFF) {
             if (!this->isDirVPK) {
-                Logger::log(LogType::ERROR, "VPK", TR("error.vpk.not_dir_archive"));
+                Logger::log(LogType::LOG_ERROR, "VPK", TR("error.vpk.not_dir_archive"));
                 return;
             }
             std::string name = fmt::format(fmt::runtime("{}_{:03d}.vpk"), this->fileName, entry.archiveIndex);
             FileInputStream stream{name};
             if (!stream)
-                Logger::log(LogType::ERROR, "VPK", TRF("error.vpk.file_not_found", name));
+                Logger::log(LogType::LOG_ERROR, "VPK", TRF("error.vpk.file_not_found", name));
             stream.seek(static_cast<long>(entry.offset));
             output = stream.readBytes(entry.length);
         } else {
             FileInputStream stream{this->fileName + ".vpk"};
             if (!stream)
-                Logger::log(LogType::ERROR, "VPK", TRF("error.vpk.file_not_found", this->fileName));
+                Logger::log(LogType::LOG_ERROR, "VPK", TRF("error.vpk.file_not_found", this->fileName));
             stream.seek(static_cast<long>(entry.offset) + static_cast<long>(this->headerSize) + static_cast<long>(this->treeSize));
             output = stream.readBytes(entry.length);
         }
