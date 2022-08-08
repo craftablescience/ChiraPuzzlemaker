@@ -2,7 +2,7 @@
 #include <config/ConEntry.h>
 #include <core/Engine.h>
 #include <resource/provider/FilesystemResourceProvider.h>
-#include <resource/provider/vpkResourceProvider.h>
+#include <resource/provider/VPKResourceProvider.h>
 #include <i18n/TranslationManager.h>
 #include <entity/camera/EditorCamera.h>
 #include <entity/model/Mesh.h>
@@ -12,7 +12,7 @@
 #include <utility/Dialogs.h>
 
 // necessary to register in material factory
-#include <render/materialVTF.h>
+#include <render/MaterialVTF.h>
 
 using namespace chira;
 
@@ -26,8 +26,8 @@ public:
                 ImGuiWindowFlags_NoBackground ;
     }
 
-    static // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
-    void setupImGuiStyle() {
+    // https://github.com/ocornut/imgui/issues/707#issuecomment-362574409
+    static void setupImGuiStyle() {
         // todo: integrate this into an abstracted ui later, and use push/pop
         ImGuiStyle* style = &ImGui::GetStyle();
         float hspacing = 8.0;
@@ -98,7 +98,6 @@ public:
     void preRenderContents() override {
         PuzzlemakerMainPanel::setupImGuiStyle();
 
-        // todo(i18n)
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu(TRC("ui.menubar.file"))) {
                 if (ImGui::MenuItem(TRC("ui.menubar.new"))) {
@@ -141,8 +140,8 @@ public:
     void renderContents() override {}
 };
 
-int main() {
-    Engine::preInit();
+int main(int argc, const char* const argv[]) {
+    Engine::preInit(argc, argv);
     Resource::addResourceProvider(new FilesystemResourceProvider{"puzzlemaker"});
     TranslationManager::addTranslationFile("file://i18n/puzzlemaker");
 

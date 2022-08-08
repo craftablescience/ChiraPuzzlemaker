@@ -19,14 +19,18 @@ set(CHIRA_BUILD_EDITOR          OFF CACHE BOOL "" FORCE)
 set(CHIRA_USE_STEAMWORKS        ON  CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(external/engine)
-set(BUILD_SHARED_LIBS ON)
 
 # SpeedyKeyV
 add_subdirectory(external/speedykv)
 
 # VTFLib
+set(BUILD_SHARED_LIBS ON)
 set(USE_LIBTXC_DXTN OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/VTFLib)
+set(BUILD_SHARED_LIBS OFF)
+
+# VPKTool
+add_subdirectory(external/vpktool)
 
 include(src/CMakeLists.txt)
 if(WIN32)
@@ -37,9 +41,11 @@ add_executable(${PROJECT_NAME} ${PUZZLEMAKER_SOURCES})
 apply_optimizations(${PROJECT_NAME})
 #target_precompile_headers(${PUZZLEMAKER_HEADERS})
 
-target_link_libraries(${PROJECT_NAME} ChiraEngine ${OPENGL_LIBRARIES} ${VTFLIB_LIBRARIES} VTFLib13 keyvalues)
+target_link_libraries(${PROJECT_NAME} ChiraEngine ${OPENGL_LIBRARIES} ${VTFLIB_LIBRARIES} VTFLib13 VPKTool keyvalues)
 target_include_directories(${PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/VTFLib/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/vpktool/include
         ${VTFLIB_INCLUDE_DIRS})
 
 # Definitions

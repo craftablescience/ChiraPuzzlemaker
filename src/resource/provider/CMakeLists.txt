@@ -1,5 +1,5 @@
 list(APPEND PUZZLEMAKER_HEADERS
-        ${CMAKE_CURRENT_LIST_DIR}/vpkResourceProvider.h)
+        ${CMAKE_CURRENT_LIST_DIR}/VPKResourceProvider.h)
 
 list(APPEND PUZZLEMAKER_SOURCES
-        ${CMAKE_CURRENT_LIST_DIR}/vpkResourceProvider.cpp)
+        ${CMAKE_CURRENT_LIST_DIR}/VPKResourceProvider.cpp)

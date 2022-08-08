@@ -1,11 +1,11 @@
 #pragma once
 
 #include <render/material/MaterialUntextured.h>
-#include "textureVTF.h"
+#include "TextureVTF.h"
 
-class MaterialVTF : public chira::MaterialUntextured {
+class MaterialVTF : public chira::IMaterial {
 public:
-    explicit MaterialVTF(const std::string& identifier_) : MaterialUntextured(identifier_) {}
+    explicit MaterialVTF(std::string identifier_) : IMaterial(std::move(identifier_)) {}
     void compile(const nlohmann::json& properties) override;
     void use() const override;
 protected:

@@ -1,13 +1,6 @@
 {
-  "dependencies": {
-    "model": "file://meshes/teapot.cmdl",
-    "material": "file://materials/vtf_test.json",
-    "materialType": "MaterialVTF"
-  },
-  "properties": {
-    "loader": "cmdl",
-    "depthFunction": "LEQUAL",
-    "backfaceCulling": true,
-    "cullType": "BACK"
-  }
+  "model": "file://meshes/teapot.cmdl",
+  "material": "file://materials/vtf_test.json",
+  "materialType": "MaterialVTF",
+  "loader": "cmdl"
 }

@@ -1,5 +1,3 @@
 {
-  "dependencies": {
-    "image": "source://materials/metal/black_floor_metal_004a.vtf"
-  }
+  "image": "source://materials/metal/black_floor_metal_004a.vtf"
 }

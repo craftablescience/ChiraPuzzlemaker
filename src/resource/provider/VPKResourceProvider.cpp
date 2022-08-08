@@ -1,4 +1,4 @@
-#include "vpkResourceProvider.h"
+#include "VPKResourceProvider.h"
 
 #include <algorithm>
 #include <hook/SteamAPI.h>
@@ -36,11 +36,5 @@ std::string VPKResourceProvider::calculateAbsolutePath(unsigned int appID, const
 }
 
 FilesystemResourceProvider* VPKResourceProvider::getFilesystemResourceProvider(unsigned int appID, const std::string& relativePath) {
-    std::string path = SteamAPI::Apps::getAppInstallPath(appID);
-    FilesystemResourceProvider::nixifyPath(path);
-    path = String::stripRight(path, '/');
-    std::string relPath = relativePath;
-    FilesystemResourceProvider::nixifyPath(relPath);
-    path = String::stripLeft(relPath, '/');
-    return new FilesystemResourceProvider{path + '/' + relPath, true, SOURCE_PROVIDER_NAME};
+    return new FilesystemResourceProvider{VPKResourceProvider::calculateAbsolutePath(appID, relativePath), true, SOURCE_PROVIDER_NAME};
 }

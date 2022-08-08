@@ -1,7 +1,7 @@
 #pragma once
 
+#include <vpktool/vpk.h>
 #include <resource/provider/IResourceProvider.h>
-#include <loader/vpk/vpk.h>
 
 const std::string SOURCE_PROVIDER_NAME = "source"; // NOLINT(cert-err58-cpp)
 
@@ -17,12 +17,12 @@ public:
     [[nodiscard]] std::string getPath() const {
         return this->absolutePath;
     }
-    [[nodiscard]] const VPK& getVPK() const {
+    [[nodiscard]] const vpktool::VPK& getVPK() const {
         return this->vpk;
     }
     [[nodiscard]] static std::string calculateAbsolutePath(unsigned int appID, const std::string& relativePath);
     [[nodiscard]] static chira::FilesystemResourceProvider* getFilesystemResourceProvider(unsigned int appID, const std::string& relativePath);
 private:
     std::string absolutePath;
-    VPK vpk;
+    vpktool::VPK vpk;
 };

@@ -1,8 +1,6 @@
 {
-  "properties": {
-    "name": "Selawk",
-    "font": "file://fonts/selawik/selawk.ttf",
-    "size": 18.0,
-    "range": "japanese"
-  }
+  "name": "Selawk",
+  "path": "file://fonts/selawik/selawk.ttf",
+  "size": 18.0,
+  "range": "japanese"
 }
