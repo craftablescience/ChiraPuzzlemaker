@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vpktool/vpk.h>
+#include <vpktool/VPK.h>
 #include <resource/provider/IResourceProvider.h>
 
 const std::string SOURCE_PROVIDER_NAME = "source"; // NOLINT(cert-err58-cpp)
